@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Bootstrap & FontAwesome CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>College Application Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        #dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        /* .college-profile styling is now handled by Bootstrap .card */
+        .profile-section {
+            margin-bottom: 14px;
+        }
+        .profile-section h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.08em;
+            color: #0074d9;
+        }
+        .scholarship-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+        }
+        .scholarship-table th, .scholarship-table td {
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            font-size: 0.98em;
+            text-align: left;
+        }
+        .scholarship-table th {
+            background: #f2f8fc;
+            cursor: pointer;
+        }
+        /* .badge styling is now handled by Bootstrap .badge */
+        .map-container {
+            width: 100%;
+            height: 180px;
+            margin: 10px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .pdf-list-section {
+            margin-top: 10px;
+        }
+        .pdf-label {
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        /* .view-pdf-btn styling is now handled by Bootstrap .btn */
+        .hidden-file-input {
+            display: none;
+        }
+        .chart-container {
+            width: 100%;
+            height: 180px;
+            margin-bottom: 10px;
+        }
+        /* .rmp-link styling is now handled by Bootstrap .btn */
+        body.dark-mode {
+            background-color: #333;
+            color: #f0f0f0;
+        }
+        /* Dark mode card styling might need adjustment with Bootstrap */
+        body.dark-mode .leaflet-container {
+            filter: invert(0.9) hue-rotate(180deg);
+        }
+        /* Dark mode button styling might need adjustment with Bootstrap */
+        body.dark-mode .scholarship-table th {
+            background: #223344;
+            color: #fff;
+        }
+        /* Dark mode button styling might need adjustment with Bootstrap */
+        /* Custom CSS for 5 columns on extra-large screens - REMOVED */
+         /* Ensure comparison charts have enough height */
+         #tuitionComparisonChart, #scholarshipComparisonChart, #netCostComparisonChart, #tuitionMinusScholarshipComparisonChart {
+            width: 100% !important;
+            height: 100% !important;
+         }
+         .card-body.p-0 {
+            position: relative;
+            flex: 1 1 auto;
+         }
+         .chart-container canvas {
+            /* Removed min/max height constraints */
+            min-width: max-content; /* Keep min-width */
+         }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<!-- Controls: Filters, Sorting, Summary Stats -->
+<div class="container mb-4">
+  <div class="row align-items-center">
+    <div class="col-12 col-md-8 mb-2 mb-md-0">
+      <div id="summaryStats" class="d-flex flex-wrap gap-3"></div>
+    </div>
+    <div class="col-12 col-md-4">
+      <form id="filterSortForm" class="row g-2">
+        <div class="col-6">
+          <select id="sortSelect" class="form-select form-select-sm" aria-label="Sort colleges">
+            <option value="">Sort By</option>
+            <option value="name">Alphabetical</option>
+            <option value="tuition">Tuition</option>
+            <option value="scholarship">Scholarship Amount</option>
+            <option value="total">Total Cost</option>
+            <option value="net">Net Cost</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <select id="costRange" class="form-select form-select-sm" aria-label="Filter by cost">
+            <option value="">All Costs</option>
+            <option value="low">Under $50,000</option>
+            <option value="mid">$50,000 - $65,000</option>
+            <option value="high">Over $65,000</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <input id="locationInput" class="form-control form-control-sm" type="text" placeholder="Filter by State/Region" aria-label="Location filter">
+        </div>
+        <div class="col-12">
+          <input id="majorInput" class="form-control form-control-sm" type="text" placeholder="Filter by Program/Major" aria-label="Major filter">
+        </div>
+        <div class="col-12">
+          <input id="scholarshipCheckbox" class="form-check-input me-1" type="checkbox" value="1" aria-label="Has scholarships">
+          <label for="scholarshipCheckbox" class="form-check-label">Has Scholarships</label>
+        </div>
+        <div class="col-12">
+           <input id="userLocationInput" class="form-control form-control-sm" type="text" placeholder="Your Location (Lat,Lng)" aria-label="Your Location for distance calculation">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar and Main Content -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar (Comparison Charts) -->
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header bg-primary text-white">Tuition Comparison</div>
+        <div class="card-body">
+          <canvas id="tuitionComparisonChart"></canvas>
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-header bg-success text-white">Total Scholarship Comparison</div>
+        <div class="card-body">
+          <canvas id="scholarshipComparisonChart"></canvas>
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-header bg-warning text-dark">Net Cost Comparison</div>
+        <div class="card-body">
+          <canvas id="netCostComparisonChart"></canvas>
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-header bg-warning text-dark">Tuition Minus Scholarship Comparison</div>
+        <div class="card-body">
+          <canvas id="tuitionMinusScholarshipComparisonChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content (College Profiles) -->
+    <div class="col-md-8">
+</head>
+<body>
+    <h1>College Application Dashboard</h1>
+    <div id="dashboard"></div>
+  </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Hardcoded data for all colleges and all PDFs (expand as needed)
+        const colleges = [
+             {
+                 name: "Marquette University",
+                 location: {
+                     lat: 43.0389,
+                     lng: -87.9289,
+                     city: "Milwaukee",
+                     state: "Wisconsin",
+                     stateAbbr: "WI",
+                     metroArea: "Milwaukee",
+                     region: "Midwest",
+                     nicknames: ["Marquette", "MU"],
+                     nearbyCities: ["Chicago", "Madison", "Green Bay"]
+                 },
+                 rmpUrl: "https://www.ratemyprofessors.com/school/565",
+                 tuition: 49500, fees: 1200, housing: 9000, meals: 5000, costOfAttendance: 64700,
+                 scholarships: [ { name: "Père Marquette Scholarship", amount: 27000, renewal: true } ],
+                 majors: ["Physical Therapy (DPT)"],
+                 specialPrograms: ["3+3 Program", "Reserved Seats in PT Program"],
+                 transportation: ["Walkable", "Bike-friendly", "Parking", "Public Transit", "Car-optional"],
+                 pdfs: [
+                     { label: "Scholarship Notification", filename: "Marquette/MarquetteScholarship.pdf" },
+                     { label: "Admission Letter", filename: "Marquette/Letter.pdf" },
+                     { label: "Tuition and Financial Aid Information", filename: "Marquette/Tuition and Financial Aid  Marquette University.pdf" }
+                 ]
+            },
+            {
+                name: "Baylor University",
+                location: {
+                    lat: 31.5493,
+                    lng: -97.1143,
+                    city: "Waco",
+                    state: "Texas",
+                    stateAbbr: "TX",
+                    metroArea: "Waco",
+                    region: "South",
+                    nicknames: ["Baylor", "BU"],
+                    nearbyCities: ["Austin", "Dallas", "Fort Worth"]
+                },
+                rmpUrl: "https://www.ratemyprofessors.com/school/90",
+                tuition: 52000, fees: 1800, housing: 8500, meals: 4800, costOfAttendance: 67100,
+                scholarships: [ { name: "Baylor Distinction Award", amount: 25000, renewal: true } ],
+                majors: ["Pre-Physical Therapy", "Biology"],
+                specialPrograms: ["Accelerated Program"],
+                transportation: ["Parking", "Car-optional"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "Baylor/LetterBaylor.pdf" },
+                    { label: "Scholarship Notification", filename: "Baylor/Baylor Letter].pdf" }
+                ]
+            },
+            {
+                name: "Widener University",
+                location: {
+                    lat: 39.8574,
+                    lng: -75.3570,
+                    city: "Chester",
+                    state: "Pennsylvania",
+                    stateAbbr: "PA",
+                    metroArea: "Philadelphia",
+                    region: "Northeast",
+                    nicknames: ["Widener"],
+                    nearbyCities: ["Philadelphia", "Wilmington", "Media"]
+                },
+                rmpUrl: "https://www.ratemyprofessors.com/school/1198",
+                tuition: 57180, fees: 730, housing: 8400, meals: 7900, costOfAttendance: 74210,
+                scholarships: [
+                    { name: "Widener University Presidential Scholarship", amount: 38000, renewal: true },
+                    { name: "Texas State Alumni Award", amount: 4000, renewal: true },
+                    { name: "University Honors Scholarship", amount: 2000, renewal: true }
+                ],
+                majors: ["Pre-Physical Therapy (3+3) Psychology"],
+                specialPrograms: ["3+3 Program"],
+                transportation: ["Walkable", "Parking", "Public Transit"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "Widener/LetterWidener.pdf" },
+                    { label: "Financial Aid Offer", filename: "Widener/FinancialAidLetterWidener.pdf" },
+                    { label: "Tuition Guide", filename: "Widener/widener 2025-2026-Undergraduate-Programs-Tuition-Guide.pdf" }
+                ]
+            },
+            {
+                name: "Daemen University",
+                location: { lat: 42.9646, lng: -78.7897 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/4135",
+                tuition: 41336, fees: 1141, housing: 7800, meals: 4200, costOfAttendance: 54477,
+                scholarships: [ { name: "Daemen Merit Scholarship", amount: 17000, renewal: true } ],
+                majors: ["Physical Therapy BS/DPT"],
+                specialPrograms: ["Accelerated Program"],
+                transportation: ["Parking", "Car-optional"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "Daemen/DaemenLetter.png.pdf" },
+                    { label: "Financial Fact Sheet", filename: "Daemen/daemen-dpt-student-financial-fact-sheet.pdf" }
+                ]
+            },
+            {
+                name: "DePaul University",
+                location: { lat: 41.9244, lng: -87.6553 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/1389",
+                tuition: 48000, fees: 1300, housing: 8700, meals: 4500, costOfAttendance: 62500,
+                scholarships: [ { name: "Presidential Scholarship", amount: 31000, renewal: true } ],
+                majors: ["Health Sciences"],
+                specialPrograms: ["Pathways Honors Program"],
+                transportation: ["Walkable", "Public Transit", "Parking"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "DePaul no 3+3/DepaulLEtter.pdf" }
+                ]
+            },
+            {
+                name: "Duquesne University",
+                location: { lat: 40.4372, lng: -79.9896 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/1586",
+                tuition: 51000, fees: 1600, housing: 8300, meals: 4400, costOfAttendance: 65300,
+                scholarships: [ { name: "Duquesne University Academic Scholarship", amount: 27000, renewal: true } ],
+                majors: ["Physical Therapy"],
+                specialPrograms: ["Pre-Medical and Health Professions Post-Secondary Certificate Program (UG-PMHPP)"],
+                transportation: ["Walkable", "Parking", "Public Transit"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "Duquesne/DUEQUESNE.pdf" },
+                    { label: "Freshman Admission Information", filename: "Duquesne/Freshman Admission.pdf" }
+                ]
+            },
+            {
+                name: "Gonzaga University",
+                location: { lat: 47.6671, lng: -117.4025 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/370",
+                tuition: 56140, fees: 1110, housing: 8620, meals: 8010, costOfAttendance: 79798,
+                scholarships: [ { name: "Gonzaga Grant", amount: 9400, renewal: true }, { name: "Gonzaga Academic Excellence", amount: 28000, renewal: true } ],
+                majors: ["Physical Therapy (DPT)"],
+                specialPrograms: [],
+                transportation: ["Parking", "Car-optional"],
+                pdfs: [
+                    { label: "Financial Aid Offer", filename: "Gonzaga no 3+3/Financial Aid.pdf" }
+                ]
+            },
+            {
+                name: "Ithaca College",
+                location: { lat: 42.4220, lng: -76.4959 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/453",
+                tuition: 56752, fees: 0, housing: 16354, meals: 0, costOfAttendance: 73106,
+                scholarships: [
+                    { name: "Ithaca College Scholarship", amount: 30000, renewal: true },
+                    { name: "Residential Experience Scholarship", amount: 2000, renewal: true },
+                    { name: "Ithaca College Grant", amount: 1467, renewal: true }
+                ],
+                majors: ["Physical Therapy (Clinical Health Studies/Physical Therapy, BS/DPT)"],
+                specialPrograms: [],
+                transportation: ["Walkable", "Parking", "Public Transit"],
+                pdfs: [
+                    { label: "Scholarship Letter", filename: "Ithaca College/IthacaCollegeLetterScholarship.pdf" },
+                    { label: "Financial Aid Package", filename: "Ithaca College/Your Financial Aid Package.pdf" }
+                ]
+            },
+            {
+                name: "Saint Louis University",
+                location: { lat: 38.6360, lng: -90.2340 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/850",
+                tuition: 56960, fees: 1000, housing: 15820, meals: 0, costOfAttendance: 80936,
+                scholarships: [
+                    { name: "Vice Presidents' Scholarship", amount: 39000, renewal: true },
+                    { name: "SLU Grant", amount: 1000, renewal: true }
+                ],
+                majors: ["Physical Therapy (DPT)", "Exercise Science - Physical Therapy"],
+                specialPrograms: ["Reserved Seats in PT Program", "6-year DPT"],
+                transportation: ["Walkable", "Parking", "Public Transit"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "Saint Louis university/Saint Louis University.pdf" },
+                    { label: "Physical Therapy Program", filename: "Saint Louis university/physical-therapy-program.pdf" },
+                    { label: "Scholarship Notification", filename: "Saint Louis university/SLU scholarship.pdf" }
+                ]
+            },
+            {
+                name: "University of Hartford",
+                location: { lat: 41.7982, lng: -72.7141 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/1103",
+                tuition: 47052, fees: 3393, housing: 8584, meals: 6306, costOfAttendance: 65335,
+                scholarships: [
+                    { name: "UH Regents' Scholarship", amount: 35000, renewal: true },
+                    { name: "FAFSA Incentive Award", amount: 2000, renewal: true }
+                ],
+                majors: ["Physical Therapy (DPT)"],
+                specialPrograms: [],
+                transportation: ["Parking", "Car-optional"],
+                pdfs: [
+                    { label: "Financial Aid Offer", filename: "University of Hartford /Universityof hartford financial aid offer.pdf" }
+                ]
+            },
+            {
+                name: "University of Illinois Chicago",
+                location: { lat: 41.8708, lng: -87.6505 },
+                rmpUrl: "https://www.ratemyprofessors.com/school/1111",
+                tuition: 27526, fees: 4966, housing: 14400, meals: 0, costOfAttendance: 54318,
+                scholarships: [ { name: "Merit Award", amount: 8000, renewal: true } ],
+                majors: ["Rehabilitation Sciences"],
+                specialPrograms: ["Honors College"],
+                transportation: ["Walkable", "Parking", "Public Transit"],
+                pdfs: [
+                    { label: "Admission Letter", filename: "University of Illinois/university of illinois chicago.pdf" },
+                    { label: "Cost of Attendance Sheet", filename: "University of Illinois/Discover the University of Illinois Chicago.pdf" }
+                ]
+            }
+            // Add Mizzou if data is available
+        ];
+
+// --- Filtering, Sorting, and Summary Stats Logic ---
+let filteredColleges = [...colleges];
+let userLocation = null; // { lat: number, lng: number } | null
+
+function renderDashboard() {
+  const dashboard = document.getElementById('dashboard');
+  dashboard.innerHTML = ''; // Clear existing cards
+  let mapInitQueue = [];
+  let chartInitQueue = [];
+  // Removed mapInitQueue: let mapInitQueue = [];
+
+  // Use Bootstrap grid for layout
+  dashboard.className = 'row g-4 justify-content-center'; // Add Bootstrap classes
+
+  filteredColleges.forEach(college => {
+    const mapId = 'map-' + Math.random().toString(36).substr(2, 9);
+    const chartId = 'chart-' + Math.random().toString(36).substr(2, 9);
+
+    // Create a Bootstrap column for each card
+    const colDiv = document.createElement('div');
+    colDiv.className = 'col-12 col-md-6 col-lg-6'; // Adjusted for wider cards (Max 3 per row on large screens)
+    colDiv.innerHTML = generateCollegeProfileHTML(college, mapId, chartId);
+    dashboard.appendChild(colDiv);
+
+    mapInitQueue.push({ mapId, location: college.location, name: college.name });
+    chartInitQueue.push({ chartId, tuition: college.tuition, fees: college.fees, housing: college.housing, meals: college.meals });
+  });
+
+  // Initialize maps and charts after a short delay
+  setTimeout(() => {
+    for (const { mapId, location, name } of mapInitQueue) initializeMap(mapId, location, name);
+    for (const { chartId, tuition, fees, housing, meals } of chartInitQueue) initializeChart(chartId, tuition, fees, housing, meals);
+    setupPdfViewButtons();
+    // Initialize Bootstrap tooltips if any are added
+    initializeNetCostComparisonChart();
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    }); // End of tooltipTriggerList.map
+
+    // Comparison charts are now initialized in filterAndSortColleges
+  }, 100);
+
+  renderSummaryStats();
+}
+
+function filterAndSortColleges() {
+  let result = [...colleges];
+
+  // Cost range filter
+  const costVal = document.getElementById('costRange').value;
+  if (costVal) {
+    result = result.filter(c => {
+      if (!c.costOfAttendance) return false;
+      if (costVal === 'low') return c.costOfAttendance < 50000;
+      if (costVal === 'mid') return c.costOfAttendance >= 50000 && c.costOfAttendance <= 65000;
+      if (costVal === 'high') return c.costOfAttendance > 65000;
+      return true;
+    });
+  }
+
+  // Scholarships filter
+  if (document.getElementById('scholarshipCheckbox').checked) {
+    result = result.filter(c => c.scholarships && c.scholarships.length > 0);
+  }
+
+  // Robust location search that checks multiple fields
+  const locVal = document.getElementById('locationInput').value.trim().toLowerCase();
+  if (locVal) {
+    result = result.filter(c => {
+      // Check name and nicknames
+      if (c.name.toLowerCase().includes(locVal)) return true;
+      if (c.location?.nicknames?.some(n => n.toLowerCase().includes(locVal))) return true;
+      
+      // Check location fields
+      if (c.location?.city?.toLowerCase().includes(locVal)) return true;
+      if (c.location?.state?.toLowerCase().includes(locVal)) return true;
+      if (c.location?.stateAbbr?.toLowerCase() === locVal) return true;
+      if (c.location?.metroArea?.toLowerCase().includes(locVal)) return true;
+      if (c.location?.region?.toLowerCase().includes(locVal)) return true;
+      if (c.location?.nearbyCities?.some(city => city.toLowerCase().includes(locVal))) return true;
+      
+      // Enhanced fuzzy matching for common abbreviations/typos
+      const fuzzyMatches = {
+        'philly': 'philadelphia',
+        'pa': 'pennsylvania',
+        'chi': 'chicago',
+        'tx': 'texas',
+        'wi': 'wisconsin',
+        'mil': 'milwaukee',
+        'waco': 'baylor',
+        'chester': 'widener',
+        'stl': 'saint louis',
+        'slu': 'saint louis university',
+        'ui': 'university of illinois',
+        'uic': 'university of illinois chicago'
+      };
+      if (fuzzyMatches[locVal]) {
+        if (c.location?.metroArea?.toLowerCase().includes(fuzzyMatches[locVal])) return true;
+        if (c.location?.state?.toLowerCase().includes(fuzzyMatches[locVal])) return true;
+      }
+      
+      return false;
+    });
+  }
+
+  // Major filter (substring match)
+  const majorVal = document.getElementById('majorInput').value.trim().toLowerCase();
+  if (majorVal) {
+    result = result.filter(c => (c.majors || []).some(m => m.toLowerCase().includes(majorVal)));
+  }
+
+  // Sorting
+  const sortVal = document.getElementById('sortSelect').value;
+  if (sortVal) {
+    if (sortVal === 'name') result.sort((a, b) => a.name.localeCompare(b.name));
+    if (sortVal === 'tuition') result.sort((a, b) => (a.tuition || 0) - (b.tuition || 0));
+    if (sortVal === 'scholarship') result.sort((a, b) => {
+      const aTotal = (a.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+      const bTotal = (b.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+      return bTotal - aTotal; // Sort descending by total scholarship amount
+    });
+    if (sortVal === 'total') result.sort((a, b) => (a.costOfAttendance || 0) - (b.costOfAttendance || 0));
+    if (sortVal === 'net') result.sort((a, b) => {
+        const aNet = (a.costOfAttendance || 0) - (a.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+        const bNet = (b.costOfAttendance || 0) - (b.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+        return aNet - bNet;
+    });
+  }
+
+  filteredColleges = result;
+  renderDashboard();
+
+  // Initialize comparison charts after dashboard is rendered
+  initializeTuitionComparisonChart();
+  initializeScholarshipComparisonChart();
+  initializeNetCostComparisonChart();
+  initializeTuitionMinusScholarshipComparisonChart();
+}
+
+function renderSummaryStats() {
+  const statsDiv = document.getElementById('summaryStats');
+  if (!statsDiv) return;
+
+  if (filteredColleges.length === 0) {
+    statsDiv.innerHTML = '<span class="text-danger">No colleges match the current filters.</span>';
+    return;
+  }
+
+  // Calculate stats based on filtered colleges
+  const validTuitionColleges = filteredColleges.filter(c => typeof c.tuition === 'number');
+  const avgTuition = validTuitionColleges.length > 0 ? Math.round(validTuitionColleges.reduce((sum, c) => sum + c.tuition, 0) / validTuitionColleges.length) : 0;
+
+  const totalScholarships = filteredColleges.reduce((sum, c) => sum + (c.scholarships || []).reduce((s, sch) => s + (sch.amount || 0), 0), 0);
+
+  const validCostColleges = filteredColleges.filter(c => typeof c.costOfAttendance === 'number');
+  const avgTotalCost = validCostColleges.length > 0 ? Math.round(validCostColleges.reduce((sum, c) => sum + c.costOfAttendance, 0) / validCostColleges.length) : 0;
+
+  // Calculate Average Net Cost
+  const validNetCostColleges = filteredColleges.filter(c => typeof c.costOfAttendance === 'number'); // Ensure COA exists for calculation
+  const avgNetCost = validNetCostColleges.length > 0 ? Math.round(validNetCostColleges.reduce((sum, c) => {
+      const totalSch = (c.scholarships || []).reduce((sSum, s) => sSum + (s.amount || 0), 0);
+      return sum + (c.costOfAttendance - totalSch); // Calculate net cost per college
+  }, 0) / validNetCostColleges.length) : 0; // Divide by count of colleges with COA
+
+  statsDiv.innerHTML = `
+    <span class="badge bg-primary p-2" data-bs-toggle="tooltip" title="Average Tuition of Displayed Colleges"><i class="fa-solid fa-graduation-cap me-1"></i> Avg Tuition: $${avgTuition.toLocaleString()}</span>
+    <span class="badge bg-success p-2" data-bs-toggle="tooltip" title="Total Scholarships Offered by Displayed Colleges"><i class="fa-solid fa-money-bill-wave me-1"></i> Total Scholarships: $${totalScholarships.toLocaleString()}</span>
+    <span class="badge bg-info text-dark p-2" data-bs-toggle="tooltip" title="Average Total Cost of Attendance for Displayed Colleges"><i class="fa-solid fa-coins me-1"></i> Avg COA: $${avgTotalCost.toLocaleString()}</span>
+    <span class="badge bg-warning text-dark p-2" data-bs-toggle="tooltip" title="Average Net Cost (COA - Scholarships) for Displayed Colleges"><i class="fa-solid fa-receipt me-1"></i> Avg Net Cost: $${avgNetCost.toLocaleString()}</span>
+    <span class="badge bg-secondary p-2" data-bs-toggle="tooltip" title="Number of Colleges Matching Filters"><i class="fa-solid fa-university me-1"></i> Colleges: ${filteredColleges.length}</span>
+  `;
+
+  // Re-initialize tooltips for the new summary stats badges
+  const tooltipTriggerList = [].slice.call(statsDiv.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+}
+
+// Initial setup on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Attach event listeners to all filter/sort controls
+  ['costRange','scholarshipCheckbox','locationInput','majorInput','sortSelect', 'userLocationInput'].forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+        if (id === 'userLocationInput') {
+            // Trigger distance update on 'change' (e.g., pressing Enter or losing focus)
+            element.addEventListener('change', handleUserLocationUpdate);
+        } else {
+            // Use 'input' for text fields for immediate feedback, 'change' for others
+            const eventType = (element.type === 'text' || element.type === 'search') ? 'input' : 'change';
+            element.addEventListener(eventType, function(event) {
+               console.log("Filter listener triggered by:", event.target); // ADD THIS LINE
+               if (event.target.closest('.view-pdf-btn')) {
+                   console.log("Ignoring PDF button click in filter listener."); // Check if this logic works as intended
+                   return; // This return might not be sufficient if the listener is on a parent element
+               }
+               filterAndSortColleges();
+            });
+        }
+    }
+  });
+
+  // Initial render based on default filters/sort
+  filterAndSortColleges();
+});
+
+// --- End Filtering, Sorting, and Summary Stats Logic ---
+
+// --- Distance Calculation Logic ---
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    // Haversine formula to calculate distance between two lat/lng points
+    const R = 6371; // Radius of the Earth in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distanceKm = R * c;
+    // Convert to miles (optional)
+    const distanceMiles = distanceKm * 0.621371;
+    return Math.round(distanceMiles); // Return distance in miles, rounded
+}
+
+function handleUserLocationUpdate() {
+    const input = document.getElementById('userLocationInput');
+    const value = input.value.trim();
+    const parts = value.split(',');
+
+    if (parts.length === 2) {
+        const lat = parseFloat(parts[0]);
+        const lng = parseFloat(parts[1]);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            userLocation = { lat: lat, lng: lng };
+            console.log("User location updated:", userLocation);
+            filterAndSortColleges(); // Re-render to show distances
+            return;
+        }
+    }
+    
+    // If input is invalid or cleared, reset userLocation and re-render
+    if (userLocation !== null) {
+         userLocation = null;
+         console.log("User location cleared.");
+         filterAndSortColleges(); // Re-render to remove distances
+    }
+}
+// --- End Distance Calculation Logic ---
+
+
+        function generateCollegeProfileHTML(college, mapId, chartId) {
+            // Use Bootstrap card structure
+            let html = `<div class="card h-100 shadow-sm">`; // Added shadow-sm for subtle depth
+            html += `<div class="card-body d-flex flex-column">`; // Use flex column for layout
+            console.log("College name length:", college.name.length);
+            html += `<h5 class="card-title" style="font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${college.name}</h5>`;
+            // Display distance if user location is set
+            let distanceHtml = '';
+            if (userLocation && college.location && typeof college.location.lat === 'number' && typeof college.location.lng === 'number') {
+                const distance = calculateDistance(userLocation.lat, userLocation.lng, college.location.lat, college.location.lng);
+                distanceHtml = `<span class="badge bg-secondary ms-2"><i class="fas fa-road me-1"></i>${distance} mi</span>`;
+            }
+            html += `<h6 class="card-subtitle mb-2 text-muted">${distanceHtml}</h6>`;
+
+            // --- Start 2-Column Layout ---
+            html += `<div class="row">`;
+
+            // --- Column 1: Costs & Financials ---
+            html += `<div class="col-6">`;
+
+            // Cost breakdown chart
+            html += `<div class="profile-section"><h6><i class="fas fa-chart-pie me-1 text-primary" aria-hidden="true"></i>Cost Breakdown</h6><div class="chart-container"><canvas id="${chartId}"></canvas></div><div id="${chartId}-legend" class="pie-legend small d-flex flex-wrap justify-content-center mt-1"></div></div>`;
+
+            // Cost details using list group
+            html += `<div class="profile-section"><h6><i class="fas fa-dollar-sign me-1 text-success" aria-hidden="true"></i>Annual Costs</h6><ul class="list-group list-group-flush small">`;
+            if (college.tuition) html += `<li class="list-group-item d-flex justify-content-between align-items-center">Tuition <span class="badge bg-light text-dark">$${college.tuition.toLocaleString()}</span></li>`;
+            if (college.fees) html += `<li class="list-group-item d-flex justify-content-between align-items-center">Fees <span class="badge bg-light text-dark">$${college.fees.toLocaleString()}</span></li>`;
+            if (college.housing) html += `<li class="list-group-item d-flex justify-content-between align-items-center">Housing <span class="badge bg-light text-dark">$${college.housing.toLocaleString()}</span></li>`;
+            if (college.meals) html += `<li class="list-group-item d-flex justify-content-between align-items-center">Meals <span class="badge bg-light text-dark">$${college.meals.toLocaleString()}</span></li>`;
+            if (college.costOfAttendance) html += `<li class="list-group-item d-flex justify-content-between align-items-center">Total COA <span class="badge bg-light text-dark">$${college.costOfAttendance.toLocaleString()}</span></li>`;
+            html += `</ul></div>`;
+
+            // Scholarships & Grants
+            html += `<div class="profile-section"><h6><i class="fas fa-award me-1 text-warning" aria-hidden="true"></i>Scholarships & Grants</h6>`;
+            const totalScholarships = (college.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+            if (college.scholarships && college.scholarships.length > 0) {
+                html += `<ul class="list-group list-group-flush small">`;
+                college.scholarships.forEach(sch => {
+                    html += `<li class="list-group-item">
+                                ${sch.name} - <span class="fw-bold">$${sch.amount.toLocaleString()}</span>
+                                ${sch.renewal ? '<i class="fas fa-check-circle text-success ms-1" aria-hidden="true" data-bs-toggle="tooltip" title="Renewable"></i><span class="visually-hidden">Renewable</span>' : '<i class="fas fa-times-circle text-danger ms-1" aria-hidden="true" data-bs-toggle="tooltip" title="Not Renewable"></i><span class="visually-hidden">Not Renewable</span>'}
+                             </li>`;
+                });
+                html += `</ul>`;
+            } else {
+                html += `<p class="text-muted small">No scholarships listed.</p>`;
+            }
+            html += `</div>`;
+
+            // Net Cost Section
+            const netCost = (college.costOfAttendance || 0) - totalScholarships;
+            html += `<div class="profile-section"><h6><i class="fas fa-receipt me-1 text-success" aria-hidden="true"></i>Estimated Net Cost</h6>`;
+            html += `<p class="fs-5 fw-bold text-success">$${netCost.toLocaleString()}<small class="text-muted fw-normal"> / year</small></p>`;
+            html += `<small class="text-muted">(Total COA - Total Scholarships)</small></div>`;
+
+            // Cost of Tuition Minus Scholarship Section
+            let tuitionMinusScholarship = (college.tuition || 0) - totalScholarships;
+            if (tuitionMinusScholarship < 0) {
+                tuitionMinusScholarship = 0;
+            }
+            html += `<div class="profile-section"><h6><i class="fas fa-calculator me-1 text-success" aria-hidden="true"></i>Cost of Tuition Minus Scholarship</h6>`;
+            html += `<p class="fs-5 fw-bold text-success">$${tuitionMinusScholarship.toLocaleString()}<small class="text-muted fw-normal"> / year</small></p>`;
+            html += `<small class="text-muted">(Tuition - Total Scholarships)</small></div>`;
+
+            html += `</div>`; // --- End Column 1 ---
+
+            // --- Column 2: Academics, Campus, etc. ---
+            html += `<div class="col-6 d-flex flex-column">`; // Use flex column for mt-auto on documents
+
+            // Majors
+            html += `<div class="profile-section"><h6><i class="fas fa-book-open me-1 text-info" aria-hidden="true"></i>Majors</h6>`;
+            if (college.majors && college.majors.length > 0) {
+                 college.majors.forEach(m => html += `<span class="badge bg-info text-dark me-1 mb-1">${m}</span>`);
+            } else {
+                html += `<p class="text-muted small">No majors listed.</p>`;
+            }
+            html += `</div>`;
+
+            // Special Programs
+            html += `<div class="profile-section"><h6><i class="fas fa-star me-1 text-secondary" aria-hidden="true"></i>Special Programs</h6>`;
+            if (college.specialPrograms && college.specialPrograms.length > 0) {
+                 college.specialPrograms.forEach(p => html += `<span class="badge bg-secondary me-1 mb-1">${p}</span>`);
+            } else {
+                html += `<p class="text-muted small">None listed.</p>`;
+            }
+            html += `</div>`;
+
+            // Campus Map
+            html += `<div class="profile-section"><h6><i class="fas fa-map-marker-alt me-1 text-danger" aria-hidden="true"></i>Campus Map</h6><div class="map-container" id="${mapId}"></div></div>`;
+
+            // Transportation
+            html += `<div class="profile-section"><h6><i class="fas fa-bus me-1 text-muted" aria-hidden="true"></i>Transportation</h6>`;
+            if (college.transportation && college.transportation.length > 0) {
+                 college.transportation.forEach(t => html += `<span class="badge bg-light text-dark me-1 mb-1">${t}</span>`);
+            } else {
+                 html += `<p class="text-muted small">No transportation info.</p>`;
+            }
+            html += `</div>`;
+
+            // Ratings & Reviews Section
+            html += `<div class="profile-section"><h6><i class="fas fa-star-half-alt me-1 text-primary" aria-hidden="true"></i>Ratings & Reviews</h6>`;
+            if (college.rmpUrl) {
+                html += `<a href="${college.rmpUrl}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-external-link-alt me-1"></i>RateMyProfessors</a>`;
+            } else {
+                html += `<p class="text-muted small">RateMyProfessors link not available.</p>`;
+            }
+            html += `</div>`;
+
+            // PDF list section (Pushed to bottom of column 2)
+            html += `<div class="profile-section mt-auto"><h6><i class="fas fa-file-pdf me-1 text-danger" aria-hidden="true"></i>Original Documents</h6>`;
+            if (college.pdfs && college.pdfs.length > 0) {
+                college.pdfs.forEach((pdf, idx) => {
+                    const inputId = `${college.name.replace(/\s+/g, '-')}-pdf-input-${idx}`; // Sanitize ID
+                    html += `<div class="mb-1">
+                                <button class="btn btn-sm btn-outline-success view-pdf-btn" data-inputid="${inputId}" data-bs-toggle="tooltip" title="View ${pdf.label}" aria-label="View PDF: ${pdf.label}">
+                                    <i class="fas fa-eye me-1"></i> ${pdf.label}
+                                </button>
+                                <input type="file" id="${inputId}" class="hidden-file-input" accept=".pdf" data-filename="${pdf.filename || pdf.label}">
+                             </div>`;
+                });
+            } else {
+                 html += `<p class="text-muted small">No documents listed.</p>`;
+            }
+            html += `</div>`; // End PDF section
+
+            html += `</div>`; // --- End Column 2 ---
+            html += `</div>`; // --- End 2-Column Row ---
+
+            html += `</div></div>`; // Close card-body and card
+            return html;
+        }
+
+        function initializeMap(mapId, location, name) {
+            if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') return;
+            try {
+                const map = L.map(mapId).setView([location.lat, location.lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                L.marker([location.lat, location.lng]).addTo(map)
+                    .bindPopup(name)
+                    .openPopup();
+            } catch (e) {
+                console.error(`Error initializing map ${mapId}:`, e);
+                const mapDiv = document.getElementById(mapId);
+                if (mapDiv) mapDiv.innerHTML = '<p class="text-danger small p-2">Error loading map.</p>';
+            }
+        }
+        console.log("initializeChart() called");
+        function initializeChart(chartId, tuition, fees, housing, meals) {
+            const ctx = document.getElementById(chartId);
+            if (!ctx) return;
+
+            // Consistent color mapping
+            const categoryColors = {
+                'Tuition': '#0074d9', // Blue
+                'Fees': '#ff851b',    // Orange
+                'Housing': '#2ecc40', // Green
+                'Meals': '#b10dc9'     // Purple
+            };
+
+            const chartData = [];
+            const chartLabels = [];
+            const chartColors = [];
+
+            if (tuition) { chartData.push(tuition); chartLabels.push('Tuition'); chartColors.push(categoryColors['Tuition']); }
+            if (fees) { chartData.push(fees); chartLabels.push('Fees'); chartColors.push(categoryColors['Fees']); }
+            if (housing) { chartData.push(housing); chartLabels.push('Housing'); chartColors.push(categoryColors['Housing']); }
+            if (meals) { chartData.push(meals); chartLabels.push('Meals'); chartColors.push(categoryColors['Meals']); }
+
+            if (chartData.length === 0) return; // Don't render if no data
+
+            // Generate Custom HTML Legend
+            const legendContainer = document.getElementById(`${chartId}-legend`);
+            if (legendContainer) {
+                let legendHtml = '';
+                chartLabels.forEach((label, index) => {
+                    legendHtml += `<span class="me-3"><span style="display:inline-block;width:12px;height:12px;background-color:${chartColors[index]};margin-right:4px;border-radius:2px;"></span>${label}</span>`;
+                });
+                legendContainer.innerHTML = legendHtml;
+            }
+
+            // Create Chart Instance
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: chartColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allow chart to fill container height better
+                    plugins: {
+                        legend: {
+                            display: false // Disable default legend
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += '$' + context.parsed.toLocaleString();
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+// --- Comparison Chart Logic ---
+let tuitionChartInstance = null;
+let scholarshipChartInstance = null;
+let tuitionMinusScholarshipChartInstance = null;
+
+let netCostChartInstance = null;
+
+function initializeTuitionComparisonChart() {
+    console.log("initializeTuitionComparisonChart() called");
+    const ctx = document.getElementById('tuitionComparisonChart');
+    if (!ctx) return;
+
+    const labels = filteredColleges.map(c => c.name);
+    const data = filteredColleges.map(c => c.tuition || 0);
+
+    if (tuitionChartInstance) {
+        tuitionChartInstance.destroy();
+    }
+
+    tuitionChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tuition Cost',
+                data: data,
+                backgroundColor: 'rgba(0, 116, 217, 0.6)', // Blue
+                borderColor: 'rgba(0, 116, 217, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'x', // Display college names on X-axis
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value, index) {
+                            return this.chart.data.labels[index];
+                        },
+                        autoSkip: false, // Prevent labels from being skipped
+                        fontSize: 10 // Reduced font size
+                     }
+                 },
+                 y: {
+                  beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initializeScholarshipComparisonChart() {
+    console.log("initializeScholarshipComparisonChart() called");
+    const ctx = document.getElementById('scholarshipComparisonChart');
+    if (!ctx) return;
+
+    const labels = filteredColleges.map(c => c.name);
+    const data = filteredColleges.map(c => 
+        (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0)
+    );
+
+    if (scholarshipChartInstance) {
+        scholarshipChartInstance.destroy();
+    }
+
+    scholarshipChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Scholarship Amount',
+                data: data,
+                backgroundColor: 'rgba(46, 204, 64, 0.6)', // Green
+                borderColor: 'rgba(46, 204, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'x',
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                       callback: function(value, index) {
+                           return this.chart.data.labels[index];
+                       },
+                       autoSkip: false, // Prevent labels from being skipped
+                       fontSize: 10 // Reduced font size
+                    }
+                },
+                 y: {
+                  beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                 tooltip: {
+                    callbacks: {
+                         label: function(context) {
+                            return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initializeNetCostComparisonChart() {
+    console.log("initializeNetCostComparisonChart() called");
+    const ctx = document.getElementById('netCostComparisonChart');
+    if (!ctx) return;
+
+    const labels = filteredColleges.map(c => c.name);
+    const data = filteredColleges.map(c => {
+        const totalSch = (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+        return (c.costOfAttendance || 0) - totalSch;
+    });
+
+    if (netCostChartInstance) {
+        netCostChartInstance.destroy();
+    }
+
+    netCostChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Net Cost (COA - Scholarships)',
+                data: data,
+                backgroundColor: 'rgba(255, 133, 27, 0.6)', // Orange
+                borderColor: 'rgba(255, 133, 27, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'x',
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value, index) {
+                           return this.chart.data.labels[index];
+                        },
+                        autoSkip: false, // Prevent labels from being skipped
+                        fontSize: 10 // Reduced font size
+                    }
+                },
+                 y: {
+                  beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                 tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+}
+        }
+    });
+}
+
+function initializeTuitionMinusScholarshipComparisonChart() {
+    const ctx = document.getElementById('tuitionMinusScholarshipComparisonChart');
+    if (!ctx) return;
+
+    const labels = filteredColleges.map(c => c.name);
+    const data = filteredColleges.map(c => {
+        const totalSch = (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+        let tuitionMinusScholarship = (c.tuition || 0) - totalSch;
+        if (tuitionMinusScholarship < 0) tuitionMinusScholarship = 0;
+        return tuitionMinusScholarship;
+    });
+
+    if (tuitionMinusScholarshipChartInstance) {
+        tuitionMinusScholarshipChartInstance.destroy();
+    }
+
+    tuitionMinusScholarshipChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tuition Minus Scholarship',
+                data: data,
+                backgroundColor: 'rgba(255, 205, 86, 0.7)', // Yellow
+                borderColor: 'rgba(255, 205, 86, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'x',
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value, index) {
+                            return this.chart.data.labels[index];
+                        },
+                        autoSkip: false, // Prevent labels from being skipped
+                        fontSize: 10 // Reduced font size
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                        } // No comma after the last property in the object
+                    }
+                }
+            }
+        }
+    });
+}
+
+// --- End Comparison Chart Logic ---
+
+
+        function setupPdfViewButtons() {
+            console.log("setupPdfViewButtons() called");
+            document.querySelectorAll('.view-pdf-btn').forEach(btn => {
+                const inputId = btn.getAttribute('data-inputid');
+                const fileInput = document.getElementById(inputId);
+                // Get the expected file path from the data-filename attribute
+                const filePath = fileInput ? fileInput.getAttribute('data-filename') : null;
+
+                if (btn && fileInput) {
+                    btn.addEventListener('click', function(event) { // Add event parameter
+                        console.log("PDF button clicked");
+                        event.preventDefault(); // Prevent default button behavior (like scrolling)
+                        event.stopPropagation(); // ***** ADD THIS LINE *****
+                        console.log("Event propagation stopped.");
+                        // Try to load the PDF from the relative path directly
+                        const modal = document.getElementById('pdfModal');
+                        const modalMsg = document.getElementById('pdfModalMessage');
+                        const pdfFrame = document.getElementById('pdfFrame');
+                        if (filePath) {
+                            pdfFrame.src = filePath;
+                            modalMsg.textContent = "If the PDF does not display, your browser may block local file access. Try running a local server or use the file upload below.";
+                            modal.style.display = 'block';
+                        } else {
+                            modalMsg.textContent = "No file path specified for this PDF.";
+                            pdfFrame.src = "";
+                            modal.style.display = 'block';
+                        }
+                    });
+                }
+            });
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdfModal').style.display = 'none';
+            const pdfFrame = document.getElementById('pdfFrame');
+            pdfFrame.src = ""; // Clear the iframe source
+            document.getElementById('pdfModalMessage').textContent = "";
+        }
+    </script>
+</body>
+</html>
