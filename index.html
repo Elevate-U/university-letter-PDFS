@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Bootstrap & FontAwesome CDN -->
@@ -1025,6 +1026,8 @@
 
         const labels = filteredColleges.map(c => c.name);
         const data = filteredColleges.map(c => c.tuition || 0);
+const lowestTuition = Math.min(...data);
+const highestTuition = Math.max(...data);
 
         if (tuitionChartInstance) {
             tuitionChartInstance.destroy();
@@ -1302,8 +1305,8 @@
                     },
                     y: { 
                          beginAtZero: false,
-                         min: Math.max(0, Math.min(...data) - (Math.max(...data) - Math.min(...data)) * 0.25),
-                         max: Math.max(...data) + (Math.max(...data) - Math.min(...data)) * 0.25,
+                         min: Math.min(...data) - 2000,
+                         max: Math.max(...data) + 2000,
                          ticks: { color: tickColor }, // Dark mode compatible
                          grid: { color: gridColor } // Dark mode compatible
                      }

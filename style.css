@@ -13,6 +13,24 @@ h1 {
     margin-top: 1rem;
 }
 
+.gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 600px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 900px) {
+    .gallery {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
 /* Responsive tweaks for small screens */
 @media (max-width: 767.98px) {
     #dashboard {
