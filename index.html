@@ -1300,11 +1300,13 @@
                             color: gridColor // Dark mode compatible
                         }
                     },
-                    y: { // Added Y-axis configuration for consistency
-                        beginAtZero: true,
-                        ticks: { color: tickColor }, // Dark mode compatible
-                        grid: { color: gridColor } // Dark mode compatible
-                    }
+                    y: { 
+                         beginAtZero: false,
+                         min: Math.max(0, Math.min(...data) - (Math.max(...data) - Math.min(...data)) * 0.25),
+                         max: Math.max(...data) + (Math.max(...data) - Math.min(...data)) * 0.25,
+                         ticks: { color: tickColor }, // Dark mode compatible
+                         grid: { color: gridColor } // Dark mode compatible
+                     }
                 },
                 plugins: {
                     legend: { display: false },
