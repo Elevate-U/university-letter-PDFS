@@ -1,0 +1,352 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+    color: #333;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem; /* Added margin */
+}
+#dashboard {
+    margin-top: 1rem;
+}
+
+/* Responsive tweaks for small screens */
+@media (max-width: 767.98px) {
+    #dashboard {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.25rem;
+        padding: 0 0.5rem;
+    }
+    .card {
+        margin-bottom: 1rem;
+        min-width: 0;
+    }
+    .card, .card-title {
+        overflow-wrap: anywhere;
+        white-space: normal !important;
+    }
+    .profile-section {
+        margin-bottom: 18px;
+        padding: 0.5rem 0.25rem;
+    }
+    .profile-section h3, .profile-section h6, .profile-section p, .profile-section small {
+        font-size: 1em !important;
+        word-break: break-word;
+    }
+    .scholarship-table th, .scholarship-table td {
+        font-size: 0.95em;
+        padding: 2px 4px;
+    }
+    .container-fluid, .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+/* .college-profile styling is now handled by Bootstrap .card */
+.profile-section {
+    margin-bottom: 14px;
+    padding: 0.5rem 1rem;
+}
+.profile-section h3 {
+    margin: 0 0 6px 0;
+    font-size: 1.08em;
+    color: #0074d9;
+}
+.scholarship-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+.scholarship-table th, .scholarship-table td {
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    font-size: 0.98em;
+    text-align: left;
+}
+.scholarship-table th {
+    background: #f2f8fc;
+    cursor: pointer;
+}
+/* .badge styling is now handled by Bootstrap .badge */
+.map-container {
+    width: 100%;
+    height: 180px;
+    margin: 10px 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.pdf-list-section {
+    margin-top: 10px;
+}
+.pdf-label {
+    font-weight: bold;
+    margin-right: 8px;
+}
+/* .view-pdf-btn styling is now handled by Bootstrap .btn */
+.hidden-file-input {
+    display: none;
+}
+.chart-container {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 10px;
+}
+/* .rmp-link styling is now handled by Bootstrap .btn */
+body.dark-mode {
+    background-color: #212529; /* Darker background */
+    color: #dee2e6; /* Lighter text */
+}
+body.dark-mode h1 {
+    color: #f8f9fa; /* Lighter heading */
+}
+body.dark-mode .card {
+    background-color: #343a40; /* Dark card background */
+    border-color: #495057; /* Darker border */
+    color: #dee2e6; /* Ensure card text is light */
+}
+body.dark-mode .card-header {
+    background-color: #495057; /* Darker header */
+    border-bottom-color: #6c757d;
+    color: #f8f9fa; /* Light header text */
+}
+/* Adjust specific header colors for dark mode if needed */
+body.dark-mode .card-header.bg-primary { background-color: #0d6efd !important; color: white !important; }
+body.dark-mode .card-header.bg-success { background-color: #198754 !important; color: white !important; }
+body.dark-mode .card-header.bg-warning { background-color: #ffc107 !important; color: #212529 !important; } /* Keep dark text on yellow */
+body.dark-mode .card-header.bg-info { background-color: #0dcaf0 !important; color: #212529 !important; } /* Keep dark text on light blue */
+
+body.dark-mode .list-group-item {
+    background-color: #343a40; /* Match card background */
+    border-color: #495057; /* Match card border */
+    color: #dee2e6;
+}
+body.dark-mode .list-group-flush > .list-group-item {
+    border-width: 0 0 1px; /* Ensure bottom border exists */
+}
+body.dark-mode .badge.bg-light {
+    background-color: #6c757d !important; /* Darker light badge */
+    color: #f8f9fa !important; /* Light text */
+}
+body.dark-mode .text-muted {
+    color: #d5dee8 !important; /* Lighter muted text */
+}
+body.dark-mode .text-dark {
+     color: #f8f9fa !important; /* Make 'dark' text light in dark mode */
+}
+body.dark-mode .leaflet-container {
+    filter: invert(1) hue-rotate(180deg); /* Full invert for map */
+}
+body.dark-mode .scholarship-table th,
+body.dark-mode .scholarship-table td {
+    border-color: #495057;
+    color: #dee2e6;
+}
+body.dark-mode .scholarship-table th {
+    background-color: #495057; /* Darker header */
+    color: #f8f9fa;
+}
+body.dark-mode .leaderboard-item {
+    border-bottom-color: #495057;
+}
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #495057;
+    border-color: #6c757d;
+    color: #dee2e6;
+}
+body.dark-mode .form-control::placeholder {
+    color: #adb5bd;
+}
+body.dark-mode .form-check-label {
+    color: #dee2e6;
+}
+body.dark-mode .btn-outline-secondary {
+    color: #adb5bd;
+    border-color: #6c757d;
+}
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: #f8f9fa;
+}
+ body.dark-mode .btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+ body.dark-mode .btn-outline-success {
+    color: #198754;
+    border-color: #198754;
+}
+body.dark-mode .btn-outline-success:hover {
+    background-color: #198754;
+    color: white;
+}
+ body.dark-mode .btn-outline-info {
+    color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+body.dark-mode .btn-outline-info:hover {
+    background-color: #0dcaf0;
+    color: #212529;
+}
+body.dark-mode .modal-content {
+    background-color: #343a40;
+    border-color: #495057;
+    color: #dee2e6;
+}
+body.dark-mode .modal-header {
+    border-bottom-color: #495057;
+}
+body.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Make close button visible */
+}
+/* Adjust chart colors/styles for dark mode if needed via JS or specific Chart.js options */
+/* REMOVED: body.dark-mode .col-md-4 { color: #fff; } - Too broad, rely on card styles */
+/* Custom CSS for 5 columns on extra-large screens - REMOVED */
+ /* Ensure comparison charts have enough height */
+ #tuitionComparisonChart, #scholarshipComparisonChart, #netCostComparisonChart, #tuitionMinusScholarshipComparisonChart {
+    width: 100% !important;
+    height: 100% !important;
+ }
+ .card-body.p-0 {
+    position: relative;
+    flex: 1 1 auto;
+ }
+ .chart-container canvas {
+    /* Removed min/max height constraints */
+    min-width: max-content; /* Keep min-width */
+ }
+/* Leaderboard Styles */
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #eee; /* Add separator */
+}
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+.leaderboard-rank {
+    font-weight: bold;
+    min-width: 25px; /* Ensure rank alignment */
+    text-align: right;
+    margin-right: 10px;
+}
+.leaderboard-name {
+    flex-grow: 1;
+    margin-right: 10px;
+    font-size: 0.9em;
+}
+.leaderboard-rate {
+    font-weight: bold;
+    min-width: 50px; /* Ensure rate alignment */
+    text-align: right;
+    padding: 0.2em 0.5em;
+    border-radius: 0.25rem;
+    color: white; /* Default text color for badges */
+}
+.leaderboard-link {
+    margin-left: 10px;
+}
+/* Color classes */
+.rate-green { background-color: #02c32f; } /* Bootstrap success green */
+.rate-yellow { background-color: #fcd14e; color: #212529 !important; } /* Bootstrap warning yellow, dark text */
+.rate-red { background-color: #dc3545; } /* Bootstrap danger red */
+.rate-na { background-color: #6c757d; } /* Bootstrap secondary gray */
+
+/* Dark Mode Adjustments for Leaderboard Badges */
+body.dark-mode .rate-yellow {
+    color: #212529 !important; /* Keep dark text on yellow even in dark mode for contrast */
+}
+/* Ensure other rate badges have light text (already default, but explicit) */
+body.dark-mode .rate-green,
+body.dark-mode .rate-red,
+body.dark-mode .rate-na {
+    color: #f8f9fa !important;
+}
+
+/* Adjustments for small screens */
+ @media (max-width: 767.98px) {
+    .leaderboard-item {
+        padding: 0.4rem 0.8rem;
+    }
+    .leaderboard-name {
+        font-size: 0.85em;
+    }
+    .leaderboard-rate {
+        font-size: 0.8em;
+        min-width: 45px;
+    }
+    .leaderboard-link .btn {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.75em;
+    }
+ }
+ /* Accordion Styles */
+.accordion-button {
+    font-size: 0.9rem; /* Smaller accordion button text */
+}
+.accordion-body {
+    font-size: 0.85rem; /* Smaller accordion body text */
+}
+.accordion-button:not(.collapsed) {
+    color: #0c63e4;
+    background-color: #e7f1ff;
+}
+body.dark-mode .accordion-button:not(.collapsed) {
+    color: #dee2e6;
+    background-color: #495057;
+}
+body.dark-mode .accordion-button {
+    background-color: #343a40;
+    color: #dee2e6;
+}
+body.dark-mode .accordion-button::after {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Make arrow visible */
+}
+body.dark-mode .accordion-item {
+    border-color: #495057;
+}
+
+/* Dark Mode Adjustments for Summary Stats Badges */
+body.dark-mode #summaryStats .badge.bg-primary { background-color: #0d6efd !important; color: white !important; }
+body.dark-mode #summaryStats .badge.bg-success { background-color: #198754 !important; color: white !important; }
+body.dark-mode #summaryStats .badge.bg-warning { background-color: #ffc107 !important; color: #212529 !important; } /* Keep dark text */
+body.dark-mode #summaryStats .badge.bg-info { background-color: #0dcaf0 !important; color: #212529 !important; } /* Keep dark text */
+body.dark-mode #summaryStats .badge.bg-secondary { background-color: #6c757d !important; color: white !important; }
+
+/* Dark Mode Adjustment for Main Net Cost Text */
+ body.dark-mode .card-body .fs-5.text-success {
+    color: #20c997 !important; /* Lighter green for dark background */
+ }
+
+/* Dark Mode Adjustments for Accordion Content based on image */
+body.dark-mode .pie-legend-item {
+    color: #dee2e6 !important; /* Make legend text light */
+}
+/* More specific icon targeting within accordion body */
+body.dark-mode .accordion-body .fa-chart-pie.text-primary { color: #58a6ff !important; } /* Cost Breakdown Icon */
+body.dark-mode .accordion-body .fa-list-ul.text-secondary { color: #adb5bd !important; } /* Annual Costs Icon */
+body.dark-mode .accordion-body .fa-award.text-warning { color: #ffda6b !important; } /* Scholarships Icon */
+body.dark-mode .accordion-body .fa-calculator.text-info { color: #67d5f0 !important; } /* Tuition Minus Scholarship Icon */
+
+/* Accordion Header Icons */
+ body.dark-mode .accordion-button i.text-success { color: #20c997 !important; } /* Costs & Scholarships Header Icon */
+ body.dark-mode .accordion-button i.text-info { color: #67d5f0 !important; } /* Academics Header Icon */
+ body.dark-mode .accordion-button i.text-danger { color: #ff7b7b !important; } /* Campus & Docs Header Icons */
+
+
+body.dark-mode .list-group-item i.fa-check-circle.text-success {
+     color: #20c997 !important; /* Lighter green for checkmark */
+}
+body.dark-mode .accordion-body .fs-6.text-info {
+     color: #67d5f0 !important; /* Lighter cyan for Tuition Minus Scholarship value */
+}

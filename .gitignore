@@ -1,0 +1,11 @@
+# Ignore macOS system files
+.DS_Store
+
+# Ignore log files
+*.log
+
+# Ignore common document and image file types anywhere in the project
+*.pdf
+*.png
+*.jpeg
+*.jpg
