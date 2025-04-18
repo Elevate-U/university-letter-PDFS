@@ -7,3 +7,5 @@
 # Ignore common document and image file types anywhere in the project
 
 API Keys (openrouter, groq, mistral-1.txt
+# Local Netlify folder
+.netlify

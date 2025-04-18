@@ -1,207 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Bootstrap & FontAwesome CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <title>College Application Dashboard</title>
-  <link rel="stylesheet" href="style.css"
-  <!-- PDF.js is moved to the end of body -->
-  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"> --> <!-- Commented out Leaflet CSS -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzB-7z_g4fmOyNcqAW7e3uugbBWpHJrWs&callback=initMap"></script> <!-- Use provided Google Maps API Key -->
-</head>
-<body>
-  <header class="container-fluid p-3 mb-4 shadow-sm"> <!-- Removed bg-light -->
-    <div class="container">
-      <div class="row align-items-center mb-3">
-        <div class="col">
-          <h1>College Application Dashboard</h1>
-        </div>
-        <div class="col-auto">
-          <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" type="button" aria-label="Toggle theme">
-            <i class="fas fa-sun"></i>
-          </button>
-        </div>
-      </div>
-      <!-- Controls: Filters, Sorting, Summary Stats -->
-      <div class="row align-items-start"> <!-- Changed align-items-center to align-items-start -->
-          <div class="col-12 col-lg-8 mb-3 mb-lg-0"> <!-- Adjusted grid for large screens -->
-            <div id="summaryStats" class="d-flex flex-wrap gap-2"></div> <!-- Reduced gap slightly -->
-          </div>
-          <div class="col-12 col-lg-4">
-            <form id="filterSortForm" class="row g-2">
-              <div class="col-6 col-sm-4"> <!-- Adjusted grid for smaller controls -->
-                <select id="sortSelect" class="form-select form-select-sm" aria-label="Sort colleges">
-                  <option value="">Sort By</option>
-                  <option value="name">Alphabetical</option>
-                  <option value="tuition">Tuition</option>
-                  <option value="scholarship">Scholarship Amount</option>
-                  <option value="total">Total Cost</option>
-                  <option value="net">Net Cost</option>
-                </select>
-              </div>
-              <div class="col-6 col-sm-4"> <!-- Adjusted grid -->
-                <select id="costRange" class="form-select form-select-sm" aria-label="Filter by cost">
-                  <option value="">All Costs</option>
-                  <option value="low">Under $50,000</option>
-                  <option value="mid">$50,000 - $65,000</option>
-                  <option value="high">Over $65,000</option>
-                </select>
-              </div>
-              <div class="col-12 col-sm-4"> <!-- Adjusted grid -->
-                <input id="locationInput" class="form-control form-control-sm" type="text" placeholder="Filter by State/Region" aria-label="Location filter">
-              </div>
-              <div class="col-12 col-sm-6"> <!-- Adjusted grid -->
-                <input id="majorInput" class="form-control form-control-sm" type="text" placeholder="Filter by Program/Major" aria-label="Major filter">
-              </div>
-               <div class="col-12 col-sm-6"> <!-- Adjusted grid -->
-                 <input id="userLocationInput" class="form-control form-control-sm" type="text" placeholder="Your Location (Lat,Lng)" aria-label="Your Location for distance calculation">
-              </div>
-              <div class="col-12">
-                <input id="scholarshipCheckbox" class="form-check-input me-1" type="checkbox" value="1" aria-label="Has scholarships">
-                <label for="scholarshipCheckbox" class="form-check-label">Has Scholarships</label>
-              </div>
-            </form>
-          </div>
-        </div>
-    </div>
-  </header>
-
-  <!-- Sidebar and Main Content -->
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Sidebar (Comparison Charts) -->
-      <div class="col-md-4">
-        <div class="card mb-3">
-          <div class="card-header bg-primary text-white">Tuition Comparison</div>
-          <div class="card-body">
-            <canvas id="tuitionComparisonChart"></canvas>
-          </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-success text-white">Total Scholarship Comparison</div>
-          <div class="card-body">
-            <canvas id="scholarshipComparisonChart"></canvas>
-          </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-warning text-dark">Net Cost Comparison</div>
-          <div class="card-body">
-            <canvas id="netCostComparisonChart"></canvas>
-          </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-warning text-dark">Tuition Minus Scholarship Comparison</div>
-          <div class="card-body">
-            <canvas id="tuitionMinusScholarshipComparisonChart"></canvas>
-          </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-info text-white"><i class="fas fa-clipboard-check me-1"></i>NPTE First-Time Pass Rate</div>
-          <div class="card-body p-0">
-            <ul class="list-group list-group-flush" id="npteLeaderboard">
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">1.</span><span class="leaderboard-name">Daemen University</span></div>
-                <div><span class="leaderboard-rate rate-green">94.5%</span><span class="ms-1 text-muted small">(127 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">2.</span><span class="leaderboard-name">Saint Louis University</span></div>
-                <div><span class="leaderboard-rate rate-green">94.3%</span><span class="ms-1 text-muted small">(157 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">3.</span><span class="leaderboard-name">Widener University</span></div>
-                <div><span class="leaderboard-rate rate-green">92.1%</span><span class="ms-1 text-muted small">(76 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">4.</span><span class="leaderboard-name">Duquesne University</span></div>
-                <div><span class="leaderboard-rate rate-yellow">91.6%</span><span class="ms-1 text-muted small">(71 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">5.</span><span class="leaderboard-name">University of Illinois Chicago (UIC)</span></div>
-                <div><span class="leaderboard-rate rate-yellow">91.2%</span><span class="ms-1 text-muted small">(113 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">6.</span><span class="leaderboard-name">Ithaca College</span></div>
-                <div><span class="leaderboard-rate rate-yellow">90.4%</span><span class="ms-1 text-muted small">(135 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">7.</span><span class="leaderboard-name">Marquette University</span></div>
-                <div><span class="leaderboard-rate rate-yellow">89.4%</span><span class="ms-1 text-muted small">(132 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">8.</span><span class="leaderboard-name">University of Hartford</span></div>
-                <div><span class="leaderboard-rate rate-yellow">88.1%</span><span class="ms-1 text-muted small">(67 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">--</span><span class="leaderboard-name">Gonzaga University</span></div>
-                <div><span class="leaderboard-rate rate-na">N/A</span><span class="ms-1 text-muted small">(Niche Kinesio/PT: #157)</span>
-                <span class="leaderboard-link" style="display: inline-block; width: 38px;"></span> <!-- Placeholder for alignment --></div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Main Content (College Profiles) -->
-      <div class="col-md-8">
-        <div id="dashboard">
-          <!-- College profiles will be rendered here by JavaScript -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PDF Modal (Structure assumed, adjust if needed) -->
-  <div class="modal" id="pdfModal" style="display:none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
-    <div class="modal-dialog modal-lg" style="margin: 1.75rem auto;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">PDF Viewer</h5>
-          <button type="button" class="btn-close" onclick="closePdfModal()" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p id="pdfModalMessage"></p>
-          <div id="pdfFrame" style="width: 100%; height: 70vh; border: none; overflow: auto; background: #f5f5f5;">
-  <!-- Canvas will be appended here by PDF.js -->
-</div>
-<style>
-#pdfFrame {
-  overflow: auto;
-}
-#pdfFrame canvas {
-  display: block;
-  margin: 0 auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  /* Remove forced width/height so natural size is used */
-}
-</style>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> --> <!-- Commented out Leaflet JS -->
-  <!-- <script> -->
-    // Set the path for Leaflet's default icon images to the CDN location
-    // Use the version matching the CSS/JS includes (e.g., 1.9.4 if using that version)
-    // L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/'; // Commented out Leaflet Icon Path
-  <!-- </script> -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Hardcoded data for all colleges and all PDFs (expand as needed)
+// Hardcoded data for all colleges and all PDFs (expand as needed)
     const colleges = [
          {
              name: "Marquette University",
@@ -228,7 +25,6 @@
                  { label: "Admission Letter", filename: "Marquette/Letter.pdf" },
                  { label: "Tuition and Financial Aid Information", filename: "Marquette/Tuition and Financial Aid  Marquette University.pdf" }
              ],
-             usNewsPTRank: "22 (tie)",
              rankingsUrl: "https://www.usnews.com/best-graduate-schools/top-health-schools/marquette-university-239105"
          }, // End of Marquette University object
         {
@@ -628,7 +424,13 @@
             document.body.classList.toggle('dark-mode', theme === 'dark');
             themeToggleBtn.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
             localStorage.setItem('theme', theme);
-            filterAndSortColleges();
+            // Re-initialize charts with the correct theme colors
+            initializeTuitionComparisonChart();
+            initializeScholarshipComparisonChart();
+            initializeNetCostComparisonChart();
+            initializeTuitionMinusScholarshipComparisonChart();
+            // Re-render dashboard to update individual pie chart legends/tooltips if needed
+            renderDashboard(); // This might be slightly inefficient but ensures theme consistency
         }
 
         applyTheme(currentTheme);
@@ -847,9 +649,13 @@
     let mapInstances = {};
 
     // Make this the global callback for Google Maps API
-    function initMap() {
+    // Ensure this function is globally accessible if called by the Google Maps script
+    window.initMap = function() {
         console.log("Google Maps API loaded, initMap called.");
         // The actual map rendering will happen inside generateCollegeProfileHTML's call to initializeMap
+        // If maps need re-initialization after API load, trigger it here or ensure initializeMap handles it.
+        // Potentially re-run renderDashboard or specifically initialize maps if they failed previously.
+        // filterAndSortColleges(); // Re-render might be needed if maps failed initially
     }
 
     function initializeMap(mapId, location, name) {
@@ -879,7 +685,8 @@
             };
             const map = new google.maps.Map(mapDiv, mapOptions);
 
-            const marker = new google.maps.Marker({
+            // Use AdvancedMarkerElement instead of deprecated Marker
+            const marker = new google.maps.marker.AdvancedMarkerElement({
                 position: { lat: location.lat, lng: location.lng },
                 map: map,
                 title: name
@@ -1408,13 +1215,10 @@ const highestTuition = Math.max(...data);
        });
    }
 
-    function closePdfModal() {
+    // Make closePdfModal globally accessible
+    window.closePdfModal = function() {
         document.getElementById('pdfModal').style.display = 'none';
         const pdfFrame = document.getElementById('pdfFrame');
         pdfFrame.innerHTML = ""; // Clear the canvas/iframe content
         document.getElementById('pdfModalMessage').textContent = "";
     }
-  </script>
-  <script type="module" src="https://unpkg.com/pdfjs-dist@5.1.91"></script>
-</body>
-</html>

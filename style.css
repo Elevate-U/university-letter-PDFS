@@ -122,9 +122,13 @@ body.dark-mode h1 {
     color: #f8f9fa; /* Lighter heading */
 }
 body.dark-mode .card {
-    background-color: #343a40; /* Dark card background */
+    background-color: #343a40 !important; /* Dark card background */
     border-color: #495057; /* Darker border */
     color: #dee2e6; /* Ensure card text is light */
+}
+
+body.dark-mode .card-body {
+    color: #dee2e6;
 }
 body.dark-mode .card-header {
     background-color: #495057; /* Darker header */
@@ -138,7 +142,7 @@ body.dark-mode .card-header.bg-warning { background-color: #ffc107 !important; c
 body.dark-mode .card-header.bg-info { background-color: #0dcaf0 !important; color: #212529 !important; } /* Keep dark text on light blue */
 
 body.dark-mode .list-group-item {
-    background-color: #343a40; /* Match card background */
+    background-color: #343a40 !important; /* Match card background */
     border-color: #495057; /* Match card border */
     color: #dee2e6;
 }
@@ -172,12 +176,12 @@ body.dark-mode .leaderboard-item {
 }
 body.dark-mode .form-control,
 body.dark-mode .form-select {
-    background-color: #495057;
-    border-color: #6c757d;
-    color: #dee2e6;
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+    color: #dee2e6 !important;
 }
 body.dark-mode .form-control::placeholder {
-    color: #adb5bd;
+    color: #6c757d; /* Darker placeholder color for better contrast */
 }
 body.dark-mode .form-check-label {
     color: #dee2e6;
@@ -321,10 +325,10 @@ body.dark-mode .rate-na {
 }
 body.dark-mode .accordion-button:not(.collapsed) {
     color: #dee2e6;
-    background-color: #495057;
+    background-color: #495057 !important;
 }
 body.dark-mode .accordion-button {
-    background-color: #343a40;
+    background-color: #343a40 !important;
     color: #dee2e6;
 }
 body.dark-mode .accordion-button::after {
@@ -340,11 +344,15 @@ body.dark-mode #summaryStats .badge.bg-success { background-color: #198754 !impo
 body.dark-mode #summaryStats .badge.bg-warning { background-color: #ffc107 !important; color: #212529 !important; } /* Keep dark text */
 body.dark-mode #summaryStats .badge.bg-info { background-color: #0dcaf0 !important; color: #212529 !important; } /* Keep dark text */
 body.dark-mode #summaryStats .badge.bg-secondary { background-color: #6c757d !important; color: white !important; }
+body.dark-mode #summaryStats .badge {
+    color: #fff !important;
+}
 
 /* Dark Mode Adjustment for Main Net Cost Text */
- body.dark-mode .card-body .fs-5.text-success {
+body.dark-mode .card-body .fs-5.text-success {
     color: #20c997 !important; /* Lighter green for dark background */
- }
+    background-color: #333 !important; /* Dark background for contrast */
+}
 
 /* Dark Mode Adjustments for Accordion Content based on image */
 body.dark-mode .pie-legend-item {
@@ -367,4 +375,59 @@ body.dark-mode .list-group-item i.fa-check-circle.text-success {
 }
 body.dark-mode .accordion-body .fs-6.text-info {
      color: #67d5f0 !important; /* Lighter cyan for Tuition Minus Scholarship value */
+}
+/* Sticky Sidebar for Comparison Charts */
+@media (min-width: 768px) { /* Apply only on md breakpoint and up */
+  .row > .col-md-4 { /* Target the sidebar column directly */
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 20px; /* Adjust this value based on your header/nav height */
+    height: calc(100vh - 40px); /* Example height, adjust as needed */
+    overflow-y: auto; /* Allow scrolling within the sidebar if content overflows */
+  }
+}
+/* Header background styling */
+body:not(.dark-mode) header.container-fluid {
+  background-color: #f8f9fa; /* Light grey for light mode (similar to bg-light) */
+  border-bottom: 1px solid #dee2e6;
+}
+
+body.dark-mode header.container-fluid {
+  background-color: #212529; /* Dark grey for dark mode */
+  border-bottom: 1px solid #495057;
+  color: #f8f9fa;
+}
+
+/* Ensure header text is visible in dark mode */
+body.dark-mode header h1 {
+    color: #f8f9fa; /* Light text for dark background */
+}
+
+/* Adjust filter form label color in dark mode */
+body.dark-mode header .form-check-label {
+    color: #adb5bd; /* Lighter text for dark background */
+}
+
+/* Dark mode styles for form controls - Increased specificity with !important */
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #495057 !important;
+    border-color: #6c757d !important;
+    color: #dee2e6 !important;
+}
+
+body.dark-mode .form-select option {
+    background-color: #495057 !important;
+    color: #dee2e6 !important;
+}
+
+/* Style the select arrow in dark mode - Increased specificity with !important */
+body.dark-mode .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23f8f9fa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") !important;
+}
+
+/* Add specific style for disabled state */
+body.dark-mode .form-select:disabled {
+    color: #6c757d !important; /* Use a muted color for disabled text */
+    opacity: 0.8; /* Slightly fade out the disabled select */
 }
