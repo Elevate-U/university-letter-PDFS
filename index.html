@@ -94,8 +94,8 @@
             </div>
           </div>
           <div class="card mb-3">
-            <div class="card-header bg-info text-dark">Tuition Minus Scholarship Comparison</div>
-            <div class="card-body sidebar-chart-container">
+             <div class="card-header bg-info text-dark">Tuition Minus Scholarship Comparison</div>
+             <div class="card-body sidebar-chart-container">
               <canvas id="tuitionMinusScholarshipComparisonChart"></canvas>
             </div>
           </div>
@@ -228,7 +228,7 @@
              name: "Gonzaga University", usNewsPTRank: "N/A (Niche Kinesiology/PT Rank: #157)",
              location: { lat: 47.6671, lng: -117.4025, city: "Spokane", state: "Washington", stateAbbr: "WA", region:"West",
                   publicTransport: { agencyName: "STA (Spokane Transit Authority)", agencyUrl: "https://www.spokanetransit.com/", faresUrl: "https://www.spokanetransit.com/fares/", fareInfo: "Approx. $2.00 (cash/Connect card/app). Student passes may be available.", routes: ["Route 25 (Division)", "Route 28 (Nevada)", "City Line (BRT) station nearby"], beginnerNotes: "Check for student pass options. STA offers real-time tracking via apps. The City Line Bus Rapid Transit provides quick east-west travel near campus." } },
-             rmpUrl: "https://www.ratemyprofessors.com/school/370", tuition: 56140, fees: 1110, housing: 8620, meals: 8010, costOfAttendance: 79798, scholarships: [ { name: "Gonzaga Grant", amount: 9400, renewal: true }, { name: "Gonzaga Academic Excellence", amount: 28000, renewal: true } ], majors: ["Physical Therapy (DPT)"], specialPrograms: [], transportation: ["Parking", "Car-optional", "Public Transit"], pdfs: [ { label: "Financial Aid Offer", filename: "Gonzaga no 3+3/Financial Aid.pdf" } ]
+             rmpUrl: "https://www.ratemyprofessors.com/school/370", tuition: 56140, fees: 1110, housing: 8620, meals: 8010, costOfAttendance: 79798, scholarships: [ { name: "Gonzaga Grant", amount: 9400, renewal: true }, { name: "Gonzaga Academic Excellence", amount: 28000, renewal: true } ], majors: ["Physical Therapy (DPT)"], specialPrograms: [], transportation: ["Parking", "Car-optional", "Public Transit"], pdfs: [ { label: "Financial Aid Offer", filename: "Gonzaga no 3+3/Financial Aid.pdf" }, { label: "Application Status Portal", filename: "Gonzaga no 3+3/Gonzaga Application Status Portal.jpeg.png" } ]
          },
           {
              name: "Ithaca College", usNewsPTRank: "50 (tie)",
@@ -436,7 +436,7 @@ function initializeChart(chartId, tuition, fees, housing, meals) {
             pageInfo.textContent = `Page ${pageNum} / ${currentPdfDoc.numPages} (Error)`;
         }
      }
-     async function showPdfModal(pdfPath, pdfLabel) { /* ... same as before ... */
+     async function showPdfModal(pdfPath, pdfLabel) { 
         const modal = document.getElementById('pdfModal');
         const modalMsg = document.getElementById('pdfModalMessage');
         const pdfFrame = document.getElementById('pdfFrame');
@@ -464,6 +464,16 @@ function initializeChart(chartId, tuition, fees, housing, meals) {
             } else { userMessage += 'An unknown error occurred.' }
             modalMsg.textContent = ''; pdfFrame.innerHTML = `<p class="text-danger p-3">${userMessage}</p>`;
             pageInfo.textContent = 'Error'; currentPdfDoc = null;
+        }
+        // Handle image files (jpg, png, gif, etc.)
+        if (/\.(jpe?g|png|gif|bmp|webp|svg)$/i.test(pdfPath)) {
+            modalTitle.textContent = pdfLabel || pdfPath.split('/').pop();
+            modalMsg.textContent = '';
+            // Render image instead of PDF
+            pdfFrame.innerHTML = `<img src="${pdfPath}" class="img-fluid" alt="${pdfLabel}">`;
+            pageInfo.textContent = '';
+            pdfModalInstance.show();
+            return;
         }
      }
 
