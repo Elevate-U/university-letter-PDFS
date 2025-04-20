@@ -3,154 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Bootstrap & FontAwesome CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>College Application Dashboard</title>
   <link rel="stylesheet" href="style.css">
-  <!-- PDF.js is moved to the end of body -->
-  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"> --> <!-- Commented out Leaflet CSS -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzB-7z_g4fmOyNcqAW7e3uugbBWpHJrWs&callback=initMap"></script> <!-- Use provided Google Maps API Key -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzB-7z_g4fmOyNcqAW7e3uugbBWpHJrWs&callback=initMap"></script> <!-- *** REPLACE YOUR_API_KEY *** -->
+  <style>
+    /* Styles moved to style.css */
+  </style>
 </head>
 <body>
-  <header class="container-fluid p-3 mb-4 shadow-sm"> <!-- Removed bg-light -->
-    <div class="container">
-      <div class="row align-items-center mb-3">
-        <div class="col">
-          <h1>College Application Dashboard</h1>
-        </div>
-        <div class="col-auto">
-          <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" type="button" aria-label="Toggle theme">
-            <i class="fas fa-sun"></i>
-          </button>
-        </div>
-      </div>
-      <!-- Controls: Filters, Sorting, Summary Stats -->
-      <div class="row align-items-start"> <!-- Changed align-items-center to align-items-start -->
-          <div class="col-12 col-lg-8 mb-3 mb-lg-0"> <!-- Adjusted grid for large screens -->
-            <div id="summaryStats" class="d-flex flex-wrap gap-2"></div> <!-- Reduced gap slightly -->
+  <header class="container-fluid p-3 mb-4 shadow-sm">
+     <div class="container">
+        <!-- Header content remains the same -->
+         <div class="row align-items-center mb-3">
+            <div class="col">
+              <h1>College Application Dashboard</h1>
+            </div>
+            <div class="col-auto">
+              <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary" type="button" aria-label="Toggle theme">
+                <i class="fas fa-sun"></i>
+              </button>
+            </div>
           </div>
-          <div class="col-12 col-lg-4">
-            <form id="filterSortForm" class="row g-2">
-              <div class="col-6 col-sm-4"> <!-- Adjusted grid for smaller controls -->
-                <select id="sortSelect" class="form-select form-select-sm" aria-label="Sort colleges">
-                  <option value="">Sort By</option>
-                  <option value="name">Alphabetical</option>
-                  <option value="tuition">Tuition</option>
-                  <option value="scholarship">Scholarship Amount</option>
-                  <option value="total">Total Cost</option>
-                  <option value="net">Net Cost</option>
-                </select>
+          <div class="row align-items-start">
+              <div class="col-12 col-lg-8 mb-3 mb-lg-0">
+                <div id="summaryStats" class="d-flex flex-wrap gap-2"></div>
               </div>
-              <div class="col-6 col-sm-4"> <!-- Adjusted grid -->
-                <select id="costRange" class="form-select form-select-sm" aria-label="Filter by cost">
-                  <option value="">All Costs</option>
-                  <option value="low">Under $50,000</option>
-                  <option value="mid">$50,000 - $65,000</option>
-                  <option value="high">Over $65,000</option>
-                </select>
+              <div class="col-12 col-lg-4">
+                <form id="filterSortForm" class="row g-2">
+                    <!-- Filter form remains the same -->
+                    <div class="col-6 col-sm-4">
+                        <select id="sortSelect" class="form-select form-select-sm" aria-label="Sort colleges">
+                          <option value="">Sort By</option>
+                          <option value="name">Alphabetical</option>
+                          <option value="tuition">Tuition</option>
+                          <option value="scholarship">Scholarship Amount</option>
+                          <option value="total">Total Cost</option>
+                          <option value="net">Net Cost</option>
+                        </select>
+                      </div>
+                      <div class="col-6 col-sm-4">
+                        <select id="costRange" class="form-select form-select-sm" aria-label="Filter by cost">
+                          <option value="">All Costs</option>
+                          <option value="low">Under $50,000</option>
+                          <option value="mid">$50,000 - $65,000</option>
+                          <option value="high">Over $65,000</option>
+                        </select>
+                      </div>
+                      <div class="col-12 col-sm-4">
+                        <input id="locationInput" class="form-control form-control-sm" type="text" placeholder="Filter by State/Region" aria-label="Location filter">
+                      </div>
+                      <div class="col-12 col-sm-6">
+                        <input id="majorInput" class="form-control form-control-sm" type="text" placeholder="Filter by Program/Major" aria-label="Major filter">
+                      </div>
+                       <div class="col-12 col-sm-6">
+                         <input id="userLocationInput" class="form-control form-control-sm" type="text" placeholder="Your Location (Lat,Lng)" aria-label="Your Location for distance calculation">
+                      </div>
+                      <div class="col-12">
+                        <input id="scholarshipCheckbox" class="form-check-input me-1" type="checkbox" value="1" aria-label="Has scholarships">
+                        <label for="scholarshipCheckbox" class="form-check-label">Has Scholarships</label>
+                      </div>
+                </form>
               </div>
-              <div class="col-12 col-sm-4"> <!-- Adjusted grid -->
-                <input id="locationInput" class="form-control form-control-sm" type="text" placeholder="Filter by State/Region" aria-label="Location filter">
-              </div>
-              <div class="col-12 col-sm-6"> <!-- Adjusted grid -->
-                <input id="majorInput" class="form-control form-control-sm" type="text" placeholder="Filter by Program/Major" aria-label="Major filter">
-              </div>
-               <div class="col-12 col-sm-6"> <!-- Adjusted grid -->
-                 <input id="userLocationInput" class="form-control form-control-sm" type="text" placeholder="Your Location (Lat,Lng)" aria-label="Your Location for distance calculation">
-              </div>
-              <div class="col-12">
-                <input id="scholarshipCheckbox" class="form-check-input me-1" type="checkbox" value="1" aria-label="Has scholarships">
-                <label for="scholarshipCheckbox" class="form-check-label">Has Scholarships</label>
-              </div>
-            </form>
-          </div>
-        </div>
-    </div>
+            </div>
+     </div>
   </header>
 
-  <!-- Sidebar and Main Content -->
   <div class="container-fluid">
     <div class="row">
       <!-- Sidebar (Comparison Charts) -->
       <div class="col-md-4">
-        <div class="card mb-3">
-          <div class="card-header bg-primary text-white">Tuition Comparison</div>
-          <div class="card-body">
-            <canvas id="tuitionComparisonChart"></canvas>
+         <!-- Sidebar content remains the same -->
+         <div class="card mb-3">
+            <div class="card-header bg-primary text-white">Tuition Comparison</div>
+            <div class="card-body sidebar-chart-container">
+              <canvas id="tuitionComparisonChart"></canvas>
+            </div>
           </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-success text-white">Total Scholarship Comparison</div>
-          <div class="card-body">
-            <canvas id="scholarshipComparisonChart"></canvas>
+          <div class="card mb-3">
+            <div class="card-header bg-success text-white">Total Scholarship Comparison</div>
+            <div class="card-body sidebar-chart-container">
+              <canvas id="scholarshipComparisonChart"></canvas>
+            </div>
           </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-warning text-dark">Net Cost Comparison</div>
-          <div class="card-body">
-            <canvas id="netCostComparisonChart"></canvas>
+          <div class="card mb-3">
+            <div class="card-header bg-warning text-dark">Net Cost Comparison</div>
+            <div class="card-body sidebar-chart-container">
+              <canvas id="netCostComparisonChart"></canvas>
+            </div>
           </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-warning text-dark">Tuition Minus Scholarship Comparison</div>
-          <div class="card-body">
-            <canvas id="tuitionMinusScholarshipComparisonChart"></canvas>
+          <div class="card mb-3">
+            <div class="card-header bg-info text-dark">Tuition Minus Scholarship Comparison</div>
+            <div class="card-body sidebar-chart-container">
+              <canvas id="tuitionMinusScholarshipComparisonChart"></canvas>
+            </div>
           </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-header bg-info text-white"><i class="fas fa-clipboard-check me-1"></i>NPTE First-Time Pass Rate</div>
-          <div class="card-body p-0">
-            <ul class="list-group list-group-flush" id="npteLeaderboard">
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">1.</span><span class="leaderboard-name">Daemen University</span></div>
-                <div><span class="leaderboard-rate rate-green">94.5%</span><span class="ms-1 text-muted small">(127 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">2.</span><span class="leaderboard-name">Saint Louis University</span></div>
-                <div><span class="leaderboard-rate rate-green">94.3%</span><span class="ms-1 text-muted small">(157 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">3.</span><span class="leaderboard-name">Widener University</span></div>
-                <div><span class="leaderboard-rate rate-green">92.1%</span><span class="ms-1 text-muted small">(76 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">4.</span><span class="leaderboard-name">Duquesne University</span></div>
-                <div><span class="leaderboard-rate rate-yellow">91.6%</span><span class="ms-1 text-muted small">(71 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">5.</span><span class="leaderboard-name">University of Illinois Chicago (UIC)</span></div>
-                <div><span class="leaderboard-rate rate-yellow">91.2%</span><span class="ms-1 text-muted small">(113 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">6.</span><span class="leaderboard-name">Ithaca College</span></div>
-                <div><span class="leaderboard-rate rate-yellow">90.4%</span><span class="ms-1 text-muted small">(135 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">7.</span><span class="leaderboard-name">Marquette University</span></div>
-                <div><span class="leaderboard-rate rate-yellow">89.4%</span><span class="ms-1 text-muted small">(132 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">8.</span><span class="leaderboard-name">University of Hartford</span></div>
-                <div><span class="leaderboard-rate rate-yellow">88.1%</span><span class="ms-1 text-muted small">(67 grads)</span>
-                <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
-              </li>
-              <li class="list-group-item leaderboard-item">
-                <div><span class="leaderboard-rank">--</span><span class="leaderboard-name">Gonzaga University</span></div>
-                <div><span class="leaderboard-rate rate-na">N/A</span><span class="ms-1 text-muted small">(Niche Kinesio/PT: #157)</span>
-                <span class="leaderboard-link" style="display: inline-block; width: 38px;"></span> <!-- Placeholder for alignment --></div>
-              </li>
-            </ul>
+          <div class="card mb-3">
+             <div class="card-header bg-secondary text-white"><i class="fas fa-clipboard-check me-1"></i>NPTE First-Time Pass Rate (2021-2023)</div>
+             <div class="card-body p-0">
+              <ul class="list-group list-group-flush" id="npteLeaderboard">
+                  <!-- NPTE List Items remain the same -->
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">1.</span><span class="leaderboard-name">Daemen University</span></div>
+                    <div><span class="leaderboard-rate rate-green">94.5%</span><span class="ms-1 text-muted small">(127 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">2.</span><span class="leaderboard-name">Saint Louis University</span></div>
+                    <div><span class="leaderboard-rate rate-green">94.3%</span><span class="ms-1 text-muted small">(157 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">3.</span><span class="leaderboard-name">Widener University</span></div>
+                    <div><span class="leaderboard-rate rate-green">92.1%</span><span class="ms-1 text-muted small">(76 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">4.</span><span class="leaderboard-name">Duquesne University</span></div>
+                    <div><span class="leaderboard-rate rate-yellow">91.6%</span><span class="ms-1 text-muted small">(71 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">5.</span><span class="leaderboard-name">University of Illinois Chicago (UIC)</span></div>
+                    <div><span class="leaderboard-rate rate-yellow">91.2%</span><span class="ms-1 text-muted small">(113 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">6.</span><span class="leaderboard-name">Ithaca College</span></div>
+                    <div><span class="leaderboard-rate rate-yellow">90.4%</span><span class="ms-1 text-muted small">(135 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">7.</span><span class="leaderboard-name">Marquette University</span></div>
+                    <div><span class="leaderboard-rate rate-yellow">89.4%</span><span class="ms-1 text-muted small">(132 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">8.</span><span class="leaderboard-name">University of Hartford</span></div>
+                    <div><span class="leaderboard-rate rate-yellow">88.1%</span><span class="ms-1 text-muted small">(67 grads)</span>
+                    <a href="https://www.fsbpt.org/Portals/0/documents/free-resources/PT%20First2%20Pass%20Rates%20_CAPTE_2025Q1.pdf" target="_blank" class="btn btn-sm btn-outline-info leaderboard-link" title="View FSBPT Source PDF"><i class="fas fa-link"></i></a></div>
+                  </li>
+                  <li class="list-group-item leaderboard-item">
+                    <div><span class="leaderboard-rank">--</span><span class="leaderboard-name">Gonzaga University</span></div>
+                    <div><span class="leaderboard-rate rate-na">N/A</span><span class="ms-1 text-muted small">(Niche Kinesio/PT: #157)</span>
+                    <span class="leaderboard-link" style="display: inline-block; width: 38px;"></span> <!-- Placeholder for alignment --></div>
+                  </li>
+              </ul>
+            </div>
           </div>
-        </div>
-
       </div>
 
       <!-- Main Content (College Profiles) -->
@@ -162,1257 +163,661 @@
     </div>
   </div>
 
-  <!-- PDF Modal (Structure assumed, adjust if needed) -->
-  <div class="modal" id="pdfModal" style="display:none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
-    <div class="modal-dialog modal-lg" style="margin: 1.75rem auto;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">PDF Viewer</h5>
-          <button type="button" class="btn-close" onclick="closePdfModal()" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p id="pdfModalMessage"></p>
-          <div id="pdfFrame" style="width: 100%; height: 70vh; border: none; overflow: auto; background: #f5f5f5;">
-  <!-- Canvas will be appended here by PDF.js -->
-</div>
-<style>
-#pdfFrame {
-  overflow: auto;
-}
-#pdfFrame canvas {
-  display: block;
-  margin: 0 auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  /* Remove forced width/height so natural size is used */
-}
-</style>
-        </div>
+  <!-- PDF Modal -->
+   <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+          <div class="modal-content">
+              <!-- Modal Header, Body (pdfFrame), Footer remain the same -->
+              <div class="modal-header">
+                  <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                  <span id="pdfModalMessage" class="ms-3 text-muted small"></span>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body p-0">
+                  <div id="pdfFrame" style="width: 100%; min-height: 80vh; background: #eee; overflow-y: auto;">
+                      <!-- Canvas elements will be appended here -->
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <span id="pdfPageInfo" class="me-auto text-muted small"></span>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
       </div>
-    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> --> <!-- Commented out Leaflet JS -->
-  <!-- <script> -->
-    // Set the path for Leaflet's default icon images to the CDN location
-    // Use the version matching the CSS/JS includes (e.g., 1.9.4 if using that version)
-    // L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/'; // Commented out Leaflet Icon Path
-  <!-- </script> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Hardcoded data for all colleges and all PDFs (expand as needed)
+  <script src="https://unpkg.com/pdfjs-dist@4.2.67/build/pdf.min.mjs" type="module"></script>
+
+  <script type="module">
+    import * as pdfjsLib from "https://unpkg.com/pdfjs-dist@4.2.67/build/pdf.min.mjs";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@4.2.67/build/pdf.worker.min.mjs';
+
+    // Colleges data array remains the same as your previous version (with publicTransport info)
     const colleges = [
          {
              name: "Marquette University",
              usNewsPTRank: "22 (tie)",
              location: {
-                 lat: 43.0389,
-                 lng: -87.9289,
-                 city: "Milwaukee",
-                 state: "Wisconsin",
-                 stateAbbr: "WI",
-                 metroArea: "Milwaukee",
-                 region: "Midwest",
-                 nicknames: ["Marquette", "MU"],
-                 nearbyCities: ["Chicago", "Madison", "Green Bay"]
+                 lat: 43.0389, lng: -87.9289, city: "Milwaukee", state: "Wisconsin", stateAbbr: "WI", metroArea: "Milwaukee", region: "Midwest", nicknames: ["Marquette", "MU"], nearbyCities: ["Chicago", "Madison", "Green Bay"],
+                 publicTransport: { agencyName: "MCTS (Milwaukee County Transit System)", agencyUrl: "https://www.ridemcts.com/", faresUrl: "https://www.ridemcts.com/fares-passes", fareInfo: "Approx. $2.00 (cash/WisGo app), $1.00 (U-PASS for students - check eligibility)", routes: ["GoldLine (GOL)", "BlueLine (BLU)", "Route 14", "Route 30"], beginnerNotes: "Use the WisGo app or website to plan trips. Many routes converge near campus on Wisconsin Ave. Student U-PASS offers significant savings." }
              },
-             rmpUrl: "https://www.ratemyprofessors.com/school/565",
-             tuition: 49500, fees: 1200, housing: 9000, meals: 5000, costOfAttendance: 64700,
-             scholarships: [ { name: "Père Marquette Scholarship", amount: 27000, renewal: true } ],
-             majors: ["Physical Therapy (DPT)"],
-             specialPrograms: ["3+3 Program", "Reserved Seats in PT Program"],
-             transportation: ["Walkable", "Bike-friendly", "Parking", "Public Transit", "Car-optional"],
-             pdfs: [
-                 { label: "Scholarship Notification", filename: "Marquette/MarquetteScholarship.pdf" },
-                 { label: "Admission Letter", filename: "Marquette/Letter.pdf" },
-                 { label: "Tuition and Financial Aid Information", filename: "Marquette/Tuition and Financial Aid  Marquette University.pdf" }
-             ],
-             rankingsUrl: "https://www.usnews.com/best-graduate-schools/top-health-schools/marquette-university-239105"
-         }, // End of Marquette University object
-        {
-            name: "Widener University",
-            usNewsPTRank: "132 (tie)",
-            location: {
-                lat: 39.8574,
-                lng: -75.3570,
-                city: "Chester",
-                state: "Pennsylvania",
-                stateAbbr: "PA",
-                metroArea: "Philadelphia",
-                region: "Northeast",
-                nicknames: ["Widener"],
-                nearbyCities: ["Philadelphia", "Wilmington", "Media"]
-            },
-            rmpUrl: "https://www.ratemyprofessors.com/school/1198",
-            tuition: 57180, fees: 730, housing: 8400, meals: 7900, costOfAttendance: 74210,
-            scholarships: [
-                { name: "Widener University Presidential Scholarship", amount: 38000, renewal: true },
-                { name: "Texas State Alumni Award", amount: 4000, renewal: true },
-                { name: "University Honors Scholarship", amount: 2000, renewal: true }
-            ],
-            majors: ["Pre-Physical Therapy (3+3)", "Psychology"],
-            specialPrograms: ["3+3 Program"],
-            transportation: ["Walkable", "Parking", "Public Transit"],
-            pdfs: [
-                { label: "Admission Letter", filename: "Widener/LetterWidener.pdf" },
-                { label: "Financial Aid Offer", filename: "Widener/FinancialAidLetterWidener.pdf" },
-                { label: "Tuition Guide", filename: "Widener/widener 2025-2026-Undergraduate-Programs-Tuition-Guide.pdf" }
-            ]
-        },
-        {
-            name: "Daemen University",
-            usNewsPTRank: "206 (tie)",
-            location: { lat: 42.9646, lng: -78.7897 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/4135",
-            tuition: 41336, fees: 1141, housing: 7800, meals: 4200, costOfAttendance: 54477,
-            scholarships: [ { name: "Daemen Merit Scholarship", amount: 17000, renewal: true } ],
-            majors: ["Physical Therapy BS/DPT"],
-            specialPrograms: ["Accelerated Program"],
-            transportation: ["Parking", "Car-optional"],
-            pdfs: [
-                { label: "Admission Letter", filename: "Daemen/DaemenLetter.pdf" },
-                { label: "Financial Fact Sheet", filename: "Daemen/daemen-dpt-student-financial-fact-sheet.pdf" }
-            ]
-        },
-        {
-            name: "Duquesne University",
-            usNewsPTRank: "55 (tie)",
-            location: { lat: 40.4372, lng: -79.9896 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/1586",
-            tuition: 51000, fees: 1600, housing: 8300, meals: 4400, costOfAttendance: 65300,
-            scholarships: [ { name: "Duquesne University Academic Scholarship", amount: 27000, renewal: true } ],
-            majors: ["Physical Therapy"],
-            specialPrograms: ["Pre-Medical and Health Professions Post-Secondary Certificate Program (UG-PMHPP)"],
-            transportation: ["Walkable", "Parking", "Public Transit"],
-            pdfs: [
-                { label: "Admission Letter", filename: "Duquesne/DUEQUESNE.pdf" },
-                { label: "Freshman Admission Information", filename: "Duquesne/Freshman Admission.pdf" }
-            ]
-        },
-        {
-            name: "Gonzaga University",
-            usNewsPTRank: "N/A (Niche Kinesiology/PT Rank: #157)",
-            location: { lat: 47.6671, lng: -117.4025 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/370",
-            tuition: 56140, fees: 1110, housing: 8620, meals: 8010, costOfAttendance: 79798,
-            scholarships: [ { name: "Gonzaga Grant", amount: 9400, renewal: true }, { name: "Gonzaga Academic Excellence", amount: 28000, renewal: true } ],
-            majors: ["Physical Therapy (DPT)"],
-            specialPrograms: [],
-            transportation: ["Parking", "Car-optional"],
-            pdfs: [
-                { label: "Financial Aid Offer", filename: "Gonzaga no 3+3/Financial Aid.pdf" }
-            ]
-        },
-        {
-            name: "Ithaca College",
-            usNewsPTRank: "50 (tie)",
-            location: { lat: 42.4220, lng: -76.4959 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/453",
-            tuition: 56752, fees: 0, housing: 16354, meals: 0, costOfAttendance: 73106,
-            scholarships: [
-                { name: "Ithaca College Scholarship", amount: 30000, renewal: true },
-                { name: "Residential Experience Scholarship", amount: 2000, renewal: true },
-                { name: "Ithaca College Grant", amount: 1467, renewal: true }
-            ],
-            majors: ["Physical Therapy (Clinical Health Studies/Physical Therapy, BS/DPT)"],
-            specialPrograms: [],
-            transportation: ["Walkable", "Parking", "Public Transit"],
-            pdfs: [
-                { label: "Scholarship Letter", filename: "Ithaca College/IthacaCollegeLetterScholarship.pdf" },
-                { label: "Financial Aid Package", filename: "Ithaca College/Your Financial Aid Package.pdf" }
-            ]
-        },
-        {
-            name: "Saint Louis University",
-            usNewsPTRank: "26 (tie)",
-            location: { lat: 38.6360, lng: -90.2340 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/850",
-            tuition: 56960, fees: 1000, housing: 15820, meals: 0, costOfAttendance: 80936,
-            scholarships: [
-                { name: "Vice Presidents' Scholarship", amount: 39000, renewal: true },
-                { name: "SLU Grant", amount: 1000, renewal: true }
-            ],
-            majors: ["Physical Therapy (DPT)", "Exercise Science - Physical Therapy"],
-            specialPrograms: ["Reserved Seats in PT Program", "6-year DPT"],
-            transportation: ["Walkable", "Parking", "Public Transit"],
-            pdfs: [
-                { label: "Admission Letter", filename: "Saint Louis university/Saint Louis University.pdf" },
-                { label: "Physical Therapy Program", filename: "Saint Louis university/physical-therapy-program.pdf" },
-                { label: "Scholarship Notification", filename: "Saint Louis university/SLU scholarship.pdf" }
-            ]
-        },
-        {
-            name: "University of Hartford",
-            usNewsPTRank: "132 (tie)",
-            location: { lat: 41.7982, lng: -72.7141 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/1103",
-            tuition: 47052, fees: 3393, housing: 8584, meals: 6306, costOfAttendance: 65335,
-            scholarships: [
-                { name: "UH Regents' Scholarship", amount: 35000, renewal: true },
-                { name: "FAFSA Incentive Award", amount: 2000, renewal: true }
-            ],
-            majors: ["Physical Therapy (DPT)"],
-            specialPrograms: [],
-            transportation: ["Parking", "Car-optional"],
-            pdfs: [
-                { label: "Financial Aid Offer", filename: "University of Hartford/University of hartford financial aid offer.pdf" }
-            ]
-        },
-        {
-            name: "University of Illinois Chicago",
-            usNewsPTRank: "33 (tie)",
-            location: { lat: 41.8708, lng: -87.6505 },
-            rmpUrl: "https://www.ratemyprofessors.com/school/1111",
-            tuition: 27526, fees: 4966, housing: 14400, meals: 0, costOfAttendance: 54318,
-            scholarships: [ { name: "Merit Award", amount: 8000, renewal: true } ],
-            majors: ["Rehabilitation Sciences"],
-            specialPrograms: ["Honors College"],
-            transportation: ["Walkable", "Parking", "Public Transit"],
-            pdfs: [
-                { label: "Admission Letter", filename: "University of Illinois/university of illinois chicago.pdf" },
-                { label: "Cost of Attendance Sheet", filename: "University of Illinois/Discover the University of Illinois Chicago.pdf" }
-            ]
-        }
-        // Add Mizzou if data is available
+             rmpUrl: "https://www.ratemyprofessors.com/school/565", tuition: 49500, fees: 1200, housing: 9000, meals: 5000, costOfAttendance: 64700, scholarships: [ { name: "Père Marquette Scholarship", amount: 27000, renewal: true } ], majors: ["Physical Therapy (DPT)"], specialPrograms: ["3+3 Program", "Reserved Seats in PT Program"], transportation: ["Walkable", "Bike-friendly", "Parking", "Public Transit", "Car-optional"], pdfs: [ { label: "Scholarship Notification", filename: "Marquette/MarquetteScholarship.pdf" }, { label: "Admission Letter", filename: "Marquette/Letter.pdf" }, { label: "Tuition and Financial Aid Information", filename: "Marquette/Tuition and Financial Aid  Marquette University.pdf" } ], rankingsUrl: "https://www.usnews.com/best-graduate-schools/top-health-schools/marquette-university-239105"
+         },
+         {
+            name: "Widener University", usNewsPTRank: "132 (tie)",
+            location: { lat: 39.8574, lng: -75.3570, city: "Chester", state: "Pennsylvania", stateAbbr: "PA", metroArea: "Philadelphia", region: "Northeast", nicknames: ["Widener"], nearbyCities: ["Philadelphia", "Wilmington", "Media"],
+                 publicTransport: { agencyName: "SEPTA (Southeastern Pennsylvania Transportation Authority)", agencyUrl: "https://www.septa.org/", faresUrl: "https://www.septa.org/fares/", fareInfo: "Approx. $2.00 (Key Card Travel Wallet), $2.50 (cash). Regional Rail has zone-based fares.", routes: ["Bus Route 113 (stops at Chester TC near campus)", "Wilmington/Newark Regional Rail Line (Chester Transportation Center station - ~15-20 min walk or Route 113 bus connection)"], beginnerNotes: "Get a SEPTA Key Card for easiest travel and lower fares. Use the SEPTA app for schedules and real-time info. Regional Rail connects to Philadelphia and Wilmington." } },
+            rmpUrl: "https://www.ratemyprofessors.com/school/1198", tuition: 57180, fees: 730, housing: 8400, meals: 7900, costOfAttendance: 74210, scholarships: [ { name: "Widener University Presidential Scholarship", amount: 38000, renewal: true }, { name: "Texas State Alumni Award", amount: 4000, renewal: true }, { name: "University Honors Scholarship", amount: 2000, renewal: true } ], majors: ["Pre-Physical Therapy (3+3)", "Psychology"], specialPrograms: ["3+3 Program"], transportation: ["Walkable", "Parking", "Public Transit"], pdfs: [ { label: "Admission Letter", filename: "Widener/LetterWidener.pdf" }, { label: "Financial Aid Offer", filename: "Widener/FinancialAidLetterWidener.pdf" }, { label: "Tuition Guide", filename: "Widener/widener 2025-2026-Undergraduate-Programs-Tuition-Guide.pdf" } ]
+         },
+         {
+            name: "Daemen University", usNewsPTRank: "206 (tie)",
+            location: { lat: 42.9646, lng: -78.7897, city: "Amherst", state: "New York", stateAbbr: "NY", region:"Northeast",
+                 publicTransport: { agencyName: "NFTA-Metro (Niagara Frontier Transportation Authority)", agencyUrl: "https://metro.nfta.com/", faresUrl: "https://metro.nfta.com/fares-passes", fareInfo: "Approx. $2.00 (cash/MetGo app/pass)", routes: ["Route 35 (Sheridan)", "Route 48 (Williamsville)", "Route 49 (Maple)"], beginnerNotes: "Routes typically run along major roads like Main St, Sheridan Dr. Use the NFTA website or Transit app for planning. Exact stops near campus may vary." } },
+            rmpUrl: "https://www.ratemyprofessors.com/school/4135", tuition: 41336, fees: 1141, housing: 7800, meals: 4200, costOfAttendance: 54477, scholarships: [ { name: "Daemen Merit Scholarship", amount: 17000, renewal: true } ], majors: ["Physical Therapy BS/DPT"], specialPrograms: ["Accelerated Program"], transportation: ["Parking", "Car-optional", "Public Transit"], pdfs: [ { label: "Admission Letter", filename: "Daemen/DaemenLetter.pdf" }, { label: "Financial Fact Sheet", filename: "Daemen/daemen-dpt-student-financial-fact-sheet.pdf" } ]
+         },
+          {
+             name: "Duquesne University", usNewsPTRank: "55 (tie)",
+             location: { lat: 40.4372, lng: -79.9896, city: "Pittsburgh", state: "Pennsylvania", stateAbbr: "PA", region:"Northeast",
+                  publicTransport: { agencyName: "PRT (Pittsburgh Regional Transit)", agencyUrl: "https://www.rideprt.org/", faresUrl: "https://www.rideprt.org/fares-and-passes/", fareInfo: "Approx. $2.75 (ConnectCard/app), Cash accepted (exact change).", routes: ["Many buses stop along Forbes Ave & Fifth Ave bordering campus (e.g., 61 series, 71 series, P3)", "Steel Plaza 'T' Station (light rail) nearby"], beginnerNotes: "Duquesne is well-served by buses. Get a ConnectCard or use the Ready2Ride app. The 'T' (light rail) offers access to other parts of the city." } },
+             rmpUrl: "https://www.ratemyprofessors.com/school/1586", tuition: 51000, fees: 1600, housing: 8300, meals: 4400, costOfAttendance: 65300, scholarships: [ { name: "Duquesne University Academic Scholarship", amount: 27000, renewal: true } ], majors: ["Physical Therapy"], specialPrograms: ["Pre-Medical and Health Professions Post-Secondary Certificate Program (UG-PMHPP)"], transportation: ["Walkable", "Parking", "Public Transit"], pdfs: [ { label: "Admission Letter", filename: "Duquesne/DUEQUESNE.pdf" }, { label: "Freshman Admission Information", filename: "Duquesne/Freshman Admission.pdf" } ]
+         },
+          {
+             name: "Gonzaga University", usNewsPTRank: "N/A (Niche Kinesiology/PT Rank: #157)",
+             location: { lat: 47.6671, lng: -117.4025, city: "Spokane", state: "Washington", stateAbbr: "WA", region:"West",
+                  publicTransport: { agencyName: "STA (Spokane Transit Authority)", agencyUrl: "https://www.spokanetransit.com/", faresUrl: "https://www.spokanetransit.com/fares/", fareInfo: "Approx. $2.00 (cash/Connect card/app). Student passes may be available.", routes: ["Route 25 (Division)", "Route 28 (Nevada)", "City Line (BRT) station nearby"], beginnerNotes: "Check for student pass options. STA offers real-time tracking via apps. The City Line Bus Rapid Transit provides quick east-west travel near campus." } },
+             rmpUrl: "https://www.ratemyprofessors.com/school/370", tuition: 56140, fees: 1110, housing: 8620, meals: 8010, costOfAttendance: 79798, scholarships: [ { name: "Gonzaga Grant", amount: 9400, renewal: true }, { name: "Gonzaga Academic Excellence", amount: 28000, renewal: true } ], majors: ["Physical Therapy (DPT)"], specialPrograms: [], transportation: ["Parking", "Car-optional", "Public Transit"], pdfs: [ { label: "Financial Aid Offer", filename: "Gonzaga no 3+3/Financial Aid.pdf" } ]
+         },
+          {
+             name: "Ithaca College", usNewsPTRank: "50 (tie)",
+             location: { lat: 42.4220, lng: -76.4959, city: "Ithaca", state: "New York", stateAbbr: "NY", region:"Northeast",
+                  publicTransport: { agencyName: "TCAT (Tompkins Consolidated Area Transit)", agencyUrl: "https://tcatbus.com/", faresUrl: "https://tcatbus.com/ride-tcat/fare-pass-options/", fareInfo: "Approx. $1.50 (cash/Tcard/app). Students ride FREE with ID during academic year on most routes.", routes: ["Routes 11, 65 often serve the campus directly or nearby."], beginnerNotes: "Students generally ride free! Use the TCAT website or transit apps (e.g., Transit, MyStop) for real-time info and planning." } },
+             rmpUrl: "https://www.ratemyprofessors.com/school/453", tuition: 56752, fees: 0, housing: 16354, meals: 0, costOfAttendance: 73106, scholarships: [ { name: "Ithaca College Scholarship", amount: 30000, renewal: true }, { name: "Residential Experience Scholarship", amount: 2000, renewal: true }, { name: "Ithaca College Grant", amount: 1467, renewal: true } ], majors: ["Physical Therapy (Clinical Health Studies/Physical Therapy, BS/DPT)"], specialPrograms: [], transportation: ["Walkable", "Parking", "Public Transit"], pdfs: [ { label: "Scholarship Letter", filename: "Ithaca College/IthacaCollegeLetterScholarship.pdf" }, { label: "Financial Aid Package", filename: "Ithaca College/Your Financial Aid Package.pdf" } ]
+         },
+         {
+             name: "Saint Louis University", usNewsPTRank: "26 (tie)",
+             location: { lat: 38.6360, lng: -90.2340, city: "St. Louis", state: "Missouri", stateAbbr: "MO", region:"Midwest",
+                  publicTransport: { agencyName: "Metro Transit - St. Louis", agencyUrl: "https://www.metrostlouis.org/", faresUrl: "https://www.metrostlouis.org/fares/", fareInfo: "Approx. $1.00 (MetroBus w/ Transit app), $2.50 (MetroLink train). Student passes often available.", routes: ["Grand MetroLink Station nearby", "Multiple MetroBus routes along Grand Blvd (e.g., #70)"], beginnerNotes: "Check SLU website for U-Pass program (often free/discounted rides). MetroLink train offers access across the city/county. Use the Transit app." } },
+             rmpUrl: "https://www.ratemyprofessors.com/school/850", tuition: 56960, fees: 1000, housing: 15820, meals: 0, costOfAttendance: 80936, scholarships: [ { name: "Vice Presidents' Scholarship", amount: 39000, renewal: true }, { name: "SLU Grant", amount: 1000, renewal: true } ], majors: ["Physical Therapy (DPT)", "Exercise Science - Physical Therapy"], specialPrograms: ["Reserved Seats in PT Program", "6-year DPT"], transportation: ["Walkable", "Parking", "Public Transit"], pdfs: [ { label: "Admission Letter", filename: "Saint Louis university/Saint Louis University.pdf" }, { label: "Physical Therapy Program", filename: "Saint Louis university/physical-therapy-program.pdf" }, { label: "Scholarship Notification", filename: "Saint Louis university/SLU scholarship.pdf" } ]
+         },
+          {
+             name: "University of Hartford", usNewsPTRank: "132 (tie)",
+             location: { lat: 41.7982, lng: -72.7141, city: "West Hartford", state: "Connecticut", stateAbbr: "CT", region:"Northeast",
+                  publicTransport: { agencyName: "CTtransit", agencyUrl: "https://www.cttransit.com/", faresUrl: "https://www.cttransit.com/fares", fareInfo: "Approx. $1.75 (cash/Go CT card/app). Check for U-Pass CT program eligibility.", routes: ["Multiple bus routes serve Bloomfield Ave near campus (check specific route numbers like 50s, 72, 74, 92)."], beginnerNotes: "U-Pass CT program allows free rides for eligible students. Use the Transit app or CTtransit website for planning and real-time info." } },
+             rmpUrl: "https://www.ratemyprofessors.com/school/1103", tuition: 47052, fees: 3393, housing: 8584, meals: 6306, costOfAttendance: 65335, scholarships: [ { name: "UH Regents' Scholarship", amount: 35000, renewal: true }, { name: "FAFSA Incentive Award", amount: 2000, renewal: true } ], majors: ["Physical Therapy (DPT)"], specialPrograms: [], transportation: ["Parking", "Car-optional", "Public Transit"], pdfs: [ { label: "Financial Aid Offer", filename: "University of Hartford/University of hartford financial aid offer.pdf" } ]
+         },
+          {
+             name: "University of Illinois Chicago", usNewsPTRank: "33 (tie)",
+             location: { lat: 41.8708, lng: -87.6505, city: "Chicago", state: "Illinois", stateAbbr: "IL", region:"Midwest",
+                  publicTransport: { agencyName: "CTA (Chicago Transit Authority)", agencyUrl: "https://www.transitchicago.com/", faresUrl: "https://www.transitchicago.com/fares/", fareInfo: "Approx. $2.25 (bus w/ Ventra), $2.50 (train w/ Ventra). Cash slightly higher. U-Pass for eligible students.", routes: ["UIC-Halsted Blue Line 'L' Station", "Polk Pink Line 'L' Station", "Multiple bus routes (#7, #8, #12, #60, #157)"], beginnerNotes: "UIC has excellent CTA access. Get a Ventra card or use the Ventra app. U-Pass offers unlimited rides during terms for eligible students. Blue Line goes to O'Hare, Pink Line connects west." } },
+             rmpUrl: "https://www.ratemyprofessors.com/school/1111", tuition: 27526, fees: 4966, housing: 14400, meals: 0, costOfAttendance: 54318, scholarships: [ { name: "Merit Award", amount: 8000, renewal: true } ], majors: ["Rehabilitation Sciences"], specialPrograms: ["Honors College"], transportation: ["Walkable", "Parking", "Public Transit"], pdfs: [ { label: "Admission Letter", filename: "University of Illinois/university of illinois chicago.pdf" }, { label: "Cost of Attendance Sheet", filename: "University of Illinois/Discover the University of Illinois Chicago.pdf" } ]
+          }
     ];
 
-    // --- Filtering, Sorting, and Summary Stats Logic ---
+    // --- Global State & Map/Chart/Modal Instances ---
     let filteredColleges = [...colleges];
-    let userLocation = null; // { lat: number, lng: number } | null
+    let userLocation = null;
+    let mapInstances = {};
+    let chartInstances = {};
+    let comparisonChartInstances = { tuition: null, scholarship: null, netCost: null, tuitionMinusScholarship: null };
+    let pdfModalInstance = null;
 
-    function renderDashboard() {
-        const dashboard = document.getElementById('dashboard');
-        dashboard.innerHTML = ''; // Clear existing cards
-        let chartInitQueue = []; // Removed mapInitQueue
-
-        // Use Bootstrap grid for layout
-        dashboard.className = 'row g-4 justify-content-center'; // Add Bootstrap classes
-
-        filteredColleges.forEach(college => {
-            const mapId = 'map-' + Math.random().toString(36).substr(2, 9);
-            const chartId = 'chart-' + Math.random().toString(36).substr(2, 9);
-
-            // Create a Bootstrap column for each card
-            const colDiv = document.createElement('div');
-            colDiv.className = 'col-12 col-md-6 col-lg-4 col-xl-4'; // Dynamic columns: 1 (sm), 2 (md), 3 (lg), 4 (xl)
-            colDiv.innerHTML = generateCollegeProfileHTML(college, mapId, chartId);
-            dashboard.appendChild(colDiv);
-
-            // Initialize map immediately after appending the element
-            initializeMap(mapId, college.location, college.name);
-
-            // Queue chart initialization
-            chartInitQueue.push({ chartId, tuition: college.tuition, fees: college.fees, housing: college.housing, meals: college.meals });
-        });
-
-        // Initialize charts and other setup after a short delay (maps are already done)
-        setTimeout(() => {
-            // Removed map initialization loop
-            for (const { chartId, tuition, fees, housing, meals } of chartInitQueue) initializeChart(chartId, tuition, fees, housing, meals);
-            // Initialize Bootstrap tooltips if any are added
-            initializeNetCostComparisonChart();
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            }); // End of tooltipTriggerList.map
-
-            // Comparison charts are now initialized in filterAndSortColleges
-
-            // Setup PDF buttons AFTER dashboard elements are rendered
-            if (typeof window.pdfjsLib !== 'undefined') {
-                 setupPdfViewButtons();
-            } else {
-                 console.warn("PDF.js not ready when trying to setup buttons in renderDashboard timeout.");
-                 // Optionally, retry setup after another short delay or rely on waitForPdfJsAndSetup's final check
-            }
-        }, 100); // Increased delay slightly just in case
-
-        renderSummaryStats();
+    // --- Google Maps API Callback ---
+    window.initMap = function() {
+        console.log("Google Maps API loaded.");
+        filterAndSortColleges(); // Initial render or re-render if API was slow
     }
 
-    function filterAndSortColleges() {
-        let result = [...colleges];
+    // --- Map/Chart/PDF/Distance/Filtering/Sorting Functions ---
+    // (Keep initializeMap, initializeChart, createComparisonChart, initializeComparisonCharts,
+    // calculateDistance, handleUserLocationUpdate, renderPdfPage, showPdfModal,
+    // renderSummaryStats, setupPdfViewButtons, handlePdfButtonClick, applyTheme
+    // functions largely the same as in the previous version)
 
-        // Cost range filter
-        const costVal = document.getElementById('costRange').value;
-        if (costVal) {
-            result = result.filter(c => {
-                if (!c.costOfAttendance) return false;
-                if (costVal === 'low') return c.costOfAttendance < 50000;
-                if (costVal === 'mid') return c.costOfAttendance >= 50000 && c.costOfAttendance <= 65000;
-                if (costVal === 'high') return c.costOfAttendance > 65000;
-                return true;
-            });
+     // --- Map Initialization ---
+    function initializeMap(mapId, location, name) {
+        const mapDiv = document.getElementById(mapId);
+        if (!mapDiv) return;
+        if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
+            mapDiv.innerHTML = '<p class="text-muted small p-2">Map location data missing.</p>'; return;
         }
-
-        // Scholarships filter
-        if (document.getElementById('scholarshipCheckbox').checked) {
-            result = result.filter(c => c.scholarships && c.scholarships.length > 0);
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            mapDiv.innerHTML = '<p class="text-warning small p-2">Map API loading...</p>'; return;
         }
+        try {
+            const mapOptions = { center: { lat: location.lat, lng: location.lng }, zoom: 15, mapTypeId: 'satellite', disableDefaultUI: true, gestureHandling: 'cooperative' };
+            const map = new google.maps.Map(mapDiv, mapOptions);
+            new google.maps.Marker({ position: { lat: location.lat, lng: location.lng }, map: map, title: name });
+            mapInstances[mapId] = map;
+        } catch (e) {
+            console.error(`Error initializing map ${mapId}:`, e);
+            mapDiv.innerHTML = '<p class="text-danger small p-2">Error loading map.</p>';
+        }
+    }
 
-        // Robust location search that checks multiple fields
-        const locVal = document.getElementById('locationInput').value.trim().toLowerCase();
-        if (locVal) {
-            result = result.filter(c => {
-                // Check name and nicknames
-                if (c.name.toLowerCase().includes(locVal)) return true;
-                if (c.location?.nicknames?.some(n => n.toLowerCase().includes(locVal))) return true;
+    // --- Chart Initialization (Individual Pies) ---
+function initializeChart(chartId, tuition, fees, housing, meals) {
+    const ctx = document.getElementById(chartId);
+    const legendContainer = document.getElementById(`${chartId}-legend`);
+    if (!ctx || !legendContainer) return;
+    if (chartInstances[chartId]) chartInstances[chartId].destroy();
 
-                // Check location fields
-                if (c.location?.city?.toLowerCase().includes(locVal)) return true;
-                if (c.location?.state?.toLowerCase().includes(locVal)) return true;
-                if (c.location?.stateAbbr?.toLowerCase() === locVal) return true;
-                if (c.location?.metroArea?.toLowerCase().includes(locVal)) return true;
-                if (c.location?.region?.toLowerCase().includes(locVal)) return true;
-                if (c.location?.nearbyCities?.some(city => city.toLowerCase().includes(locVal))) return true;
+    const isDarkMode = document.body.classList.contains('dark-mode');
 
-                // Enhanced fuzzy matching for common abbreviations/typos
-                const fuzzyMatches = {
-                    'philly': 'philadelphia',
-                    'pa': 'pennsylvania',
-                    'chi': 'chicago',
-                    'tx': 'texas',
-                    'wi': 'wisconsin',
-                    'mil': 'milwaukee',
-                    'waco': 'baylor',
-                    'chester': 'widener',
-                    'stl': 'saint louis',
-                    'slu': 'saint louis university',
-                    'ui': 'university of illinois',
-                    'uic': 'university of illinois chicago'
-                };
-                if (fuzzyMatches[locVal]) {
-                    if (c.location?.metroArea?.toLowerCase().includes(fuzzyMatches[locVal])) return true;
-                    if (c.location?.state?.toLowerCase().includes(fuzzyMatches[locVal])) return true;
+    // Define colors based on theme
+    const categoryColors = {
+        'Tuition': isDarkMode ? '#58a6ff' : '#0d6efd',
+        'Fees':    isDarkMode ? ' #ffda6b' :  '#ffc107',
+        'Housing': isDarkMode ? '#3dd56d' : '#198754',
+        'Meals':   isDarkMode ? '#a985d9' : '#6f42c1' // Example: Defined a slightly lighter purple for dark mode
+        // You might want to add --dm-color-purple-light variable to your CSS :root
+    };
+
+    const chartData = [], chartLabels = [], chartColors = [];
+    if (tuition > 0) { chartData.push(tuition); chartLabels.push('Tuition'); chartColors.push(categoryColors['Tuition']); }
+    if (fees > 0) { chartData.push(fees); chartLabels.push('Fees'); chartColors.push(categoryColors['Fees']); }
+    if (housing > 0) { chartData.push(housing); chartLabels.push('Housing'); chartColors.push(categoryColors['Housing']); }
+    if (meals > 0) { chartData.push(meals); chartLabels.push('Meals'); chartColors.push(categoryColors['Meals']); }
+
+    legendContainer.innerHTML = '';
+    if (chartData.length === 0) {
+        ctx.style.display = 'none'; legendContainer.innerHTML = '<p class="text-muted small">No cost breakdown.</p>'; return;
+    } else { ctx.style.display = 'block'; }
+
+    const legendTextColor = isDarkMode ? 'var(--dm-text-primary, #e0e0e0)' : 'var(--bs-body-color, #212529)';
+    legendContainer.style.color = legendTextColor;
+    // Use the NOW theme-dependent chartColors for the legend swatches
+    legendContainer.innerHTML = chartLabels.map((label, index) => `<span class="me-3 pie-legend-item"><span style="display:inline-block;width:12px;height:12px;background-color:${chartColors[index]};margin-right:4px;border-radius:2px;vertical-align:middle;"></span>${label}</span>`).join('');
+
+    const tooltipTitleColor = isDarkMode ? 'var(--dm-text-emphasis, #ffffff)' : 'var(--bs-dark, #212529)';
+    const tooltipBodyColor = isDarkMode ? 'var(--dm-text-primary, #e0e0e0)' : 'var(--bs-body-color, #343a40)';
+    const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+    const tooltipBorderColor = isDarkMode ? 'var(--dm-border-medium, #444)' : '#ccc';
+    const chartBorderColor = isDarkMode ? 'var(--dm-bg-surface, #1e1e1e)' : '#fff'; // Keep using theme border
+
+    chartInstances[chartId] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: chartColors, // Use the theme-dependent colors
+                borderWidth: 1,
+                borderColor: chartBorderColor // Use the theme-dependent border
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: tooltipBgColor,
+                    titleColor: tooltipTitleColor,
+                    bodyColor: tooltipBodyColor,
+                    borderColor: tooltipBorderColor,
+                    borderWidth: 1,
+                    callbacks: {
+                        label: ctx => `${ctx.label || ''}: $${ctx.parsed?.toLocaleString() || '0'}`
+                    }
                 }
-
-                return false;
-            });
+            }
         }
+    });
+}
 
-        // Major filter (substring match)
-        const majorVal = document.getElementById('majorInput').value.trim().toLowerCase();
-        if (majorVal) {
-            result = result.filter(c => (c.majors || []).some(m => m.toLowerCase().includes(majorVal)));
+     // --- Comparison Chart Initializers (Bars) ---
+     function createComparisonChart(chartId, instanceKey, label, dataLabels, dataValues, backgroundColor, borderColor) {
+         const ctx = document.getElementById(chartId)?.getContext('2d');
+         if (!ctx) { console.error("Comparison chart canvas context not found:", chartId); return; }
+         if (comparisonChartInstances[instanceKey]) comparisonChartInstances[instanceKey].destroy();
+         const isDarkMode = document.body.classList.contains('dark-mode');
+         const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+         const tickColor = isDarkMode ? 'var(--dm-text-secondary, #adb5bd)' : '#666';
+         const tooltipTitleColor = isDarkMode ? 'var(--dm-text-emphasis, #ffffff)' : 'var(--bs-dark, #212529)';
+         const tooltipBodyColor = isDarkMode ? 'var(--dm-text-primary, #e0e0e0)' : 'var(--bs-body-color, #343a40)';
+         const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+         const tooltipBorderColor = isDarkMode ? 'var(--dm-border-medium, #444)' : '#ccc';
+
+         comparisonChartInstances[instanceKey] = new Chart(ctx, {
+             type: 'bar', data: { labels: dataLabels, datasets: [{ label: label, data: dataValues, backgroundColor: backgroundColor, borderColor: borderColor, borderWidth: 1 }] },
+             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { beginAtZero: true, ticks: { color: tickColor, callback: v => '$' + v.toLocaleString() }, grid: { color: gridColor } }, y: { ticks: { color: tickColor, font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: tooltipBgColor, titleColor: tooltipTitleColor, bodyColor: tooltipBodyColor, borderColor: tooltipBorderColor, borderWidth: 1, callbacks: { label: ctx => `${ctx.dataset.label}: $${ctx.parsed?.x?.toLocaleString() || '0'}` } } } }
+         });
+     }
+     function initializeComparisonCharts() {
+        const labels = filteredColleges.map(c => c.name);
+        const getSchTotal = c => (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
+        createComparisonChart('tuitionComparisonChart', 'tuition', 'Tuition Cost', labels, filteredColleges.map(c => c.tuition || 0), 'rgba(0, 116, 217, 0.7)', 'rgba(0, 116, 217, 1)');
+        createComparisonChart('scholarshipComparisonChart', 'scholarship', 'Total Scholarship Amount', labels, filteredColleges.map(getSchTotal), 'rgba(46, 204, 64, 0.7)', 'rgba(46, 204, 64, 1)');
+        createComparisonChart('netCostComparisonChart', 'netCost', 'Net Cost (COA - Scholarships)', labels, filteredColleges.map(c => Math.max(0, (c.costOfAttendance || 0) - getSchTotal(c))), 'rgba(255, 133, 27, 0.7)', 'rgba(255, 133, 27, 1)');
+        createComparisonChart('tuitionMinusScholarshipComparisonChart', 'tuitionMinusScholarship', 'Tuition Minus Scholarship', labels, filteredColleges.map(c => Math.max(0, (c.tuition || 0) - getSchTotal(c))), 'rgba(255, 205, 86, 0.7)', 'rgba(255, 205, 86, 1)');
+     }
+
+     // --- Distance Calculation ---
+     function calculateDistance(lat1, lon1, lat2, lon2) {
+         if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return null;
+         const R = 6371; // km
+         const dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+         return Math.round(R * c * 0.621371); // miles
+     }
+     function handleUserLocationUpdate() {
+         const input = document.getElementById('userLocationInput'), value = input.value.trim(), parts = value.split(',');
+         if (parts.length === 2) {
+             const lat = parseFloat(parts[0]), lng = parseFloat(parts[1]);
+             if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                 userLocation = { lat, lng }; console.log("User location updated:", userLocation); filterAndSortColleges(); return;
+             }
+         }
+         if (userLocation !== null || value === '') { userLocation = null; console.log("User location cleared/invalid."); filterAndSortColleges(); }
+     }
+
+     // --- PDF Viewing Logic ---
+     let currentPdfDoc = null, currentPdfScale = 1.5;
+     async function renderPdfPage(pageNum) { /* ... same as before ... */
+        if (!currentPdfDoc) return;
+        const pdfFrame = document.getElementById('pdfFrame');
+        const pageInfo = document.getElementById('pdfPageInfo');
+        const canvas = pdfFrame.querySelector('canvas') || document.createElement('canvas');
+        if (!pdfFrame.contains(canvas)) { pdfFrame.innerHTML = ''; pdfFrame.appendChild(canvas); }
+        const context = canvas.getContext('2d');
+        try {
+            const page = await currentPdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: currentPdfScale });
+            canvas.height = viewport.height; canvas.width = viewport.width;
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            pageInfo.textContent = `Page ${pageNum} of ${currentPdfDoc.numPages}`;
+        } catch (error) {
+            console.error(`Error rendering PDF page ${pageNum}:`, error);
+            pdfFrame.innerHTML = `<p class="text-danger p-3">Error rendering page ${pageNum}.</p>`;
+            pageInfo.textContent = `Page ${pageNum} / ${currentPdfDoc.numPages} (Error)`;
         }
-
-        // Sorting
-        const sortVal = document.getElementById('sortSelect').value;
-        if (sortVal) {
-            if (sortVal === 'name') result.sort((a, b) => a.name.localeCompare(b.name));
-            if (sortVal === 'tuition') result.sort((a, b) => (a.tuition || 0) - (b.tuition || 0));
-            if (sortVal === 'scholarship') result.sort((a, b) => {
-                const aTotal = (a.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-                const bTotal = (b.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-                return bTotal - aTotal; // Sort descending by total scholarship amount
-            });
-            if (sortVal === 'total') result.sort((a, b) => (a.costOfAttendance || 0) - (b.costOfAttendance || 0));
-            if (sortVal === 'net') result.sort((a, b) => {
-                const aNet = (a.costOfAttendance || 0) - (a.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-                const bNet = (b.costOfAttendance || 0) - (b.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-                return aNet - bNet;
-            });
+     }
+     async function showPdfModal(pdfPath, pdfLabel) { /* ... same as before ... */
+        const modal = document.getElementById('pdfModal');
+        const modalMsg = document.getElementById('pdfModalMessage');
+        const pdfFrame = document.getElementById('pdfFrame');
+        const pageInfo = document.getElementById('pdfPageInfo');
+        const modalTitle = document.getElementById('pdfModalLabel');
+        if (!pdfModalInstance) pdfModalInstance = new bootstrap.Modal(modal);
+        modalTitle.textContent = pdfLabel || "PDF Viewer"; modalMsg.textContent = "Loading PDF...";
+        pdfFrame.innerHTML = '<div class="d-flex justify-content-center align-items-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+        pageInfo.textContent = ''; pdfModalInstance.show(); currentPdfDoc = null;
+        console.log("Attempting to load PDF from:", pdfPath);
+        try {
+             if (!pdfjsLib || !pdfjsLib.getDocument) throw new Error("PDF.js library not available.");
+            const loadingTask = pdfjsLib.getDocument(pdfPath);
+            currentPdfDoc = await loadingTask.promise;
+            modalMsg.textContent = `Loaded: ${pdfLabel || pdfPath.split('/').pop()}`;
+            await renderPdfPage(1);
+        } catch (error) {
+            console.error("Error loading/rendering PDF:", error, "Path:", pdfPath);
+            let userMessage = `Error loading PDF (${pdfLabel || pdfPath.split('/').pop()}). `;
+            if (error instanceof Error) {
+                if (error.name === 'MissingPDFException') userMessage += 'File not found.';
+                else if (error.name === 'UnexpectedResponseException') userMessage += 'Network error or invalid response.';
+                else if (error.name === 'PasswordException') userMessage += 'PDF is password protected.';
+                else userMessage += `Details: ${error.message}.`;
+            } else { userMessage += 'An unknown error occurred.' }
+            modalMsg.textContent = ''; pdfFrame.innerHTML = `<p class="text-danger p-3">${userMessage}</p>`;
+            pageInfo.textContent = 'Error'; currentPdfDoc = null;
         }
+     }
 
-        filteredColleges = result;
-        renderDashboard();
-
-        // Initialize comparison charts after dashboard is rendered
-        initializeTuitionComparisonChart();
-        initializeScholarshipComparisonChart();
-        initializeNetCostComparisonChart();
-        initializeTuitionMinusScholarshipComparisonChart();
-    }
-
-    function renderSummaryStats() {
+     // --- Filtering, Sorting, and Rendering Logic ---
+     function renderSummaryStats() { /* ... same as before ... */
         const statsDiv = document.getElementById('summaryStats');
         if (!statsDiv) return;
-
-        if (filteredColleges.length === 0) {
-            statsDiv.innerHTML = '<span class="text-danger">No colleges match the current filters.</span>';
-            return;
-        }
-
-        // Calculate stats based on filtered colleges
-        const validTuitionColleges = filteredColleges.filter(c => typeof c.tuition === 'number');
-        const avgTuition = validTuitionColleges.length > 0 ? Math.round(validTuitionColleges.reduce((sum, c) => sum + c.tuition, 0) / validTuitionColleges.length) : 0;
-
-        const totalScholarships = filteredColleges.reduce((sum, c) => sum + (c.scholarships || []).reduce((s, sch) => s + (sch.amount || 0), 0), 0);
-
-        const validCostColleges = filteredColleges.filter(c => typeof c.costOfAttendance === 'number');
-        const avgTotalCost = validCostColleges.length > 0 ? Math.round(validCostColleges.reduce((sum, c) => sum + c.costOfAttendance, 0) / validCostColleges.length) : 0;
-
-        // Calculate Average Net Cost
-        const validNetCostColleges = filteredColleges.filter(c => typeof c.costOfAttendance === 'number'); // Ensure COA exists for calculation
-        const avgNetCost = validNetCostColleges.length > 0 ? Math.round(validNetCostColleges.reduce((sum, c) => {
-            const totalSch = (c.scholarships || []).reduce((sSum, s) => sSum + (s.amount || 0), 0);
-            return sum + (c.costOfAttendance - totalSch); // Calculate net cost per college
-        }, 0) / validNetCostColleges.length) : 0; // Divide by count of colleges with COA
-
+        if (filteredColleges.length === 0) { statsDiv.innerHTML = '<span class="badge bg-danger p-2">No colleges match filters.</span>'; return; }
+        const validTuition = filteredColleges.filter(c => typeof c.tuition === 'number' && c.tuition > 0);
+        const avgTuition = validTuition.length > 0 ? Math.round(validTuition.reduce((s, c) => s + c.tuition, 0) / validTuition.length) : 0;
+        const totalScholarships = filteredColleges.reduce((s, c) => s + (c.scholarships || []).reduce((ss, sch) => ss + (sch.amount || 0), 0), 0);
+        const validCOA = filteredColleges.filter(c => typeof c.costOfAttendance === 'number' && c.costOfAttendance > 0);
+        const avgTotalCost = validCOA.length > 0 ? Math.round(validCOA.reduce((s, c) => s + c.costOfAttendance, 0) / validCOA.length) : 0;
+        const validNet = filteredColleges.filter(c => typeof c.costOfAttendance === 'number');
+        const avgNetCost = validNet.length > 0 ? Math.round(validNet.reduce((s, c) => s + Math.max(0, c.costOfAttendance - (c.scholarships || []).reduce((ss, sch) => ss + (sch.amount || 0), 0)), 0) / validNet.length) : 0;
         statsDiv.innerHTML = `
-            <span class="badge bg-primary p-2" data-bs-toggle="tooltip" title="Average Tuition of Displayed Colleges"><i class="fa-solid fa-graduation-cap me-1"></i> Avg Tuition: $${avgTuition.toLocaleString()}</span>
-            <span class="badge bg-success p-2" data-bs-toggle="tooltip" title="Total Scholarships Offered by Displayed Colleges"><i class="fa-solid fa-money-bill-wave me-1"></i> Total Scholarships: $${totalScholarships.toLocaleString()}</span>
-            <span class="badge bg-info text-dark p-2" data-bs-toggle="tooltip" title="Average Total Cost of Attendance for Displayed Colleges"><i class="fa-solid fa-coins me-1"></i> Avg COA: $${avgTotalCost.toLocaleString()}</span>
-            <span class="badge bg-warning text-dark p-2" data-bs-toggle="tooltip" title="Average Net Cost (COA - Scholarships) for Displayed Colleges"><i class="fa-solid fa-receipt me-1"></i> Avg Net Cost: $${avgNetCost.toLocaleString()}</span>
-            <span class="badge bg-secondary p-2" data-bs-toggle="tooltip" title="Number of Colleges Matching Filters"><i class="fa-solid fa-university me-1"></i> Colleges: ${filteredColleges.length}</span>
-        `;
-
-        // Re-initialize tooltips for the new summary stats badges
+            <span class="badge bg-primary p-2" data-bs-toggle="tooltip" title="Avg Tuition"><i class="fa-solid fa-graduation-cap me-1"></i> Avg Tuition: ${avgTuition > 0 ? '$' + avgTuition.toLocaleString() : 'N/A'}</span>
+            <span class="badge bg-success p-2" data-bs-toggle="tooltip" title="Total Scholarships"><i class="fa-solid fa-money-bill-wave me-1"></i> Total Aid: $${totalScholarships.toLocaleString()}</span>
+            <span class="badge bg-info text-dark p-2" data-bs-toggle="tooltip" title="Avg COA"><i class="fa-solid fa-coins me-1"></i> Avg COA: ${avgTotalCost > 0 ? '$' + avgTotalCost.toLocaleString() : 'N/A'}</span>
+            <span class="badge bg-warning text-dark p-2" data-bs-toggle="tooltip" title="Avg Net Cost (COA - Aid)"><i class="fa-solid fa-receipt me-1"></i> Avg Net: ${avgNetCost > 0 ? '$' + avgNetCost.toLocaleString() : 'N/A'}</span>
+            <span class="badge bg-secondary p-2" data-bs-toggle="tooltip" title="# Colleges"><i class="fa-solid fa-university me-1"></i> Colleges: ${filteredColleges.length}</span>`;
         const tooltipTriggerList = [].slice.call(statsDiv.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    }
+        tooltipTriggerList.map(el => bootstrap.Tooltip.getInstance(el)?.dispose() || new bootstrap.Tooltip(el)); // Re-init tooltips
+     }
+     function filterAndSortColleges() { /* ... filtering and sorting logic remains identical ... */
+        console.time("FilterSortRender");
+        let result = [...colleges];
+        const costVal = document.getElementById('costRange').value;
+         if (costVal) { result = result.filter(c => { if (typeof c.costOfAttendance !== 'number') return false; if (costVal === 'low') return c.costOfAttendance < 50000; if (costVal === 'mid') return c.costOfAttendance >= 50000 && c.costOfAttendance <= 65000; if (costVal === 'high') return c.costOfAttendance > 65000; return false; }); }
+         if (document.getElementById('scholarshipCheckbox').checked) { result = result.filter(c => c.scholarships?.some(s => s.amount > 0)); }
+         const locVal = document.getElementById('locationInput').value.trim().toLowerCase();
+         if (locVal) { result = result.filter(c => [c.name, c.location?.city, c.location?.state, c.location?.stateAbbr, c.location?.metroArea, c.location?.region, ...(c.location?.nicknames || []), ...(c.location?.nearbyCities || [])].some(field => field?.toLowerCase().includes(locVal))); }
+         const majorVal = document.getElementById('majorInput').value.trim().toLowerCase();
+         if (majorVal) { result = result.filter(c => c.majors?.some(m => m.toLowerCase().includes(majorVal))); }
+         const sortVal = document.getElementById('sortSelect').value;
+         if (sortVal) { result.sort((a, b) => { const getSch = c => (c.scholarships || []).reduce((s, sch) => s + (sch.amount || 0), 0); const getNet = c => Math.max(0, (c.costOfAttendance || 0) - getSch(c)); if (sortVal === 'name') return a.name.localeCompare(b.name); if (sortVal === 'tuition') return (a.tuition || 0) - (b.tuition || 0); if (sortVal === 'scholarship') return getSch(b) - getSch(a); if (sortVal === 'total') return (a.costOfAttendance || 0) - (b.costOfAttendance || 0); if (sortVal === 'net') return getNet(a) - getNet(b); return 0; }); }
+         filteredColleges = result;
+         renderDashboard(); initializeComparisonCharts(); renderSummaryStats();
+         console.timeEnd("FilterSortRender");
+     }
 
-    // Function to wait for PDF.js and then setup buttons
-    function waitForPdfJsAndSetup(maxAttempts = 30, interval = 100) { // Try for 3 seconds max
-        let attempts = 0;
-        function check() {
-            if (typeof window.pdfjsLib !== 'undefined') {
-                console.log("PDF.js library loaded. Button setup will occur after dashboard render.");
-                // Set the worker source for PDF.js
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@5.1.91/build/pdf.worker.min.mjs';
-                console.log("PDF.js workerSrc set to:", pdfjsLib.GlobalWorkerOptions.workerSrc);
-                // setupPdfViewButtons(); // Removed from here
-            } else if (attempts < maxAttempts) {
-                attempts++;
-                console.log(`PDF.js not ready, attempt ${attempts}/${maxAttempts}. Retrying in ${interval}ms...`);
-                setTimeout(check, interval);
-            } else {
-                console.error(`PDF.js failed to load after ${maxAttempts} attempts.`);
-                // Optionally display an error message to the user in the UI
-                const modalMsg = document.getElementById('pdfModalMessage');
-                if (modalMsg) modalMsg.textContent = "Error: PDF viewer library failed to load. Please refresh the page.";
-            }
-        }
-        check();
-    }
+    // *** UPDATED renderDashboard for 2 columns ***
+    function renderDashboard() {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
 
-    // Initial setup on DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function() {
-        // Confirm pdfjsLib global is present after DOM load
-        console.log("pdfjsLib is", typeof window.pdfjsLib, window.pdfjsLib ? "PDF.js loaded" : "undefined or not loaded");
+        dashboard.innerHTML = '';
+        mapInstances = {};
+        chartInstances = {};
 
-        // Wait for PDF.js library before setting up buttons
-        waitForPdfJsAndSetup();
-
-        // Attach event listeners to all filter/sort controls
-        ['costRange', 'scholarshipCheckbox', 'locationInput', 'majorInput', 'sortSelect', 'userLocationInput'].forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                if (id === 'userLocationInput') {
-                    // Trigger distance update on 'change' (e.g., pressing Enter or losing focus)
-                    element.addEventListener('change', handleUserLocationUpdate);
-                } else {
-                    // Use 'input' for text fields for immediate feedback, 'change' for others
-                    const eventType = (element.type === 'text' || element.type === 'search') ? 'input' : 'change';
-                    element.addEventListener(eventType, function(event) {
-                       console.log("Filter listener triggered by:", event.target); // ADD THIS LINE
-                       if (event.target.closest('.view-pdf-btn')) {
-                           console.log("Ignoring PDF button click in filter listener."); // Check if this logic works as intended
-                           return; // This return might not be sufficient if the listener is on a parent element
-                       }
-                       filterAndSortColleges();
-                    });
-                }
+        // Dispose existing tooltips before re-rendering
+        const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(tooltipEl => {
+            const instance = bootstrap.Tooltip.getInstance(tooltipEl);
+            if (instance) {
+                instance.dispose();
             }
         });
 
-        // --- Theme Toggle Logic ---
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        let currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
-        function applyTheme(theme) {
-            document.body.classList.toggle('dark-mode', theme === 'dark');
-            themeToggleBtn.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-            localStorage.setItem('theme', theme);
-            filterAndSortColleges();
+        // *** Changed col-xl-4 to col-md-6 for 2 columns on medium+ screens ***
+        dashboard.className = 'row g-4 align-items-stretch'; // Use align-items-stretch
+        if (filteredColleges.length === 0) {
+             dashboard.innerHTML = '<div class="col-12"><p class="text-center text-muted mt-5">No colleges match your filters.</p></div>';
+             return;
         }
 
-        applyTheme(currentTheme);
+        const fragment = document.createDocumentFragment();
+        filteredColleges.forEach(college => {
+            const sanitizedName = college.name.replace(/[^a-zA-Z0-9_-]/g, '');
+            const suffix = Math.random().toString(16).slice(2, 8);
+            const mapId = `map-${sanitizedName}-${suffix}`;
+            const chartId = `chart-${sanitizedName}-${suffix}`;
 
-        themeToggleBtn.addEventListener('click', () => {
-            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-            applyTheme(newTheme);
+            const colDiv = document.createElement('div');
+            // *** Use col-md-6 for 2 columns on medium screens and up ***
+            colDiv.className = 'col-12 col-md-6 d-flex'; // Ensure 2 columns on medium+
+            colDiv.innerHTML = generateCollegeProfileHTML(college, mapId, chartId);
+            fragment.appendChild(colDiv);
         });
-        // --- End Theme Toggle Logic ---
 
-       // Add dark mode toggle on accordion button click - MOVED TO generateCollegeProfileHTML
+        dashboard.appendChild(fragment);
 
+        // Initialize maps, charts, and tooltips after appending
+        setTimeout(() => {
+            console.log("Initializing maps, charts, tooltips post-render...");
+            filteredColleges.forEach(college => {
+                const sanitizedName = college.name.replace(/[^a-zA-Z0-9_-]/g, '');
+                const mapDiv = dashboard.querySelector(`[id^="map-${sanitizedName}-"]`);
+                const chartCanvas = dashboard.querySelector(`[id^="chart-${sanitizedName}-"]`);
+                if (mapDiv?.id && !mapInstances[mapDiv.id]) { initializeMap(mapDiv.id, college.location, college.name); }
+                if (chartCanvas?.id && !chartInstances[chartCanvas.id]) { initializeChart(chartCanvas.id, college.tuition, college.fees, college.housing, college.meals); }
+            });
 
-        // Initial render based on default filters/sort
-        filterAndSortColleges();
-    });
+            // Initialize Bootstrap tooltips for the *new* content
+            const newTooltipTriggerList = [].slice.call(dashboard.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            newTooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 
-    // --- End Filtering, Sorting, and Summary Stats Logic ---
+            // PDF buttons are handled by delegation, no need to re-setup listener here
 
-    // --- Distance Calculation Logic ---
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        // Haversine formula to calculate distance between two lat/lng points
-        const R = 6371; // Radius of the Earth in km
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distanceKm = R * c;
-        // Convert to miles (optional)
-        const distanceMiles = distanceKm * 0.621371;
-        return Math.round(distanceMiles); // Return distance in miles, rounded
+        }, 50);
     }
 
-    function handleUserLocationUpdate() {
-        const input = document.getElementById('userLocationInput');
-        const value = input.value.trim();
-        const parts = value.split(',');
-
-        if (parts.length === 2) {
-            const lat = parseFloat(parts[0]);
-            const lng = parseFloat(parts[1]);
-            if (!isNaN(lat) && !isNaN(lng)) {
-                userLocation = { lat: lat, lng: lng };
-                console.log("User location updated:", userLocation);
-                filterAndSortColleges(); // Re-render to show distances
-                return;
-            }
-        }
-
-        // If input is invalid or cleared, reset userLocation and re-render
-        if (userLocation !== null) {
-             userLocation = null;
-             console.log("User location cleared.");
-             filterAndSortColleges(); // Re-render to remove distances
-        }
-    }
-    // --- End Distance Calculation Logic ---
-
-    // *** START MODIFIED FUNCTION ***
+    // *** UPDATED HTML Generation Function ***
     function generateCollegeProfileHTML(college, mapId, chartId) {
-        const sanitizedCollegeName = college.name.replace(/[^a-zA-Z0-9]/g, ''); // Sanitize name for IDs
-        const accordionId = `accordion-${sanitizedCollegeName}`;
+        const sanitizedCollegeName = college.name.replace(/[^a-zA-Z0-9_-]/g, '');
+        const accordionId = `accordion-${sanitizedCollegeName}-${mapId.slice(-4)}`;
         const totalScholarships = (college.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-        const netCost = (college.costOfAttendance || 0) - totalScholarships;
-        const tuitionMinusScholarship = Math.max(0, (college.tuition || 0) - totalScholarships);
+        const netCost = Math.max(0, (college.costOfAttendance || 0) - totalScholarships);
+        const hasPublicTransport = college.location?.publicTransport;
 
         let html = `<div class="card h-100 shadow-sm w-100">`;
-        html += `<div class="card-body d-flex flex-column">`;
+        html += `<div class="card-body d-flex flex-column">`; // flex-column is important
 
-        // --- Visible Header ---
+        // --- Card Header Area ---
+        html += `<div class="card-header-section mb-3">`; // Wrapper for top section
+
+        // Row for Name/Rank and Map/Location
+        html += `<div class="row align-items-start mb-2">`; // align-items-start keeps tops aligned
+
+        // Left Column: Name, Rank, Net Cost, Buttons
+        html += `<div class="col-md-7 col-lg-8">`;
         html += `<h5 class="card-title mb-1">${college.name}</h5>`;
-        if (college.usNewsPTRank) {
-           html += `<h6 class="card-subtitle mb-2 text-muted small">US News PT Rank: ${college.usNewsPTRank}</h6>`;
-        }
+        html += `<h6 class="card-subtitle mb-2 text-muted small">US News PT Rank: ${college.usNewsPTRank || 'N/A'}</h6>`;
+
         let distanceHtml = '';
-        if (userLocation && college.location && typeof college.location.lat === 'number' && typeof college.location.lng === 'number') {
+        if (userLocation && college.location?.lat && college.location?.lng) {
             const distance = calculateDistance(userLocation.lat, userLocation.lng, college.location.lat, college.location.lng);
-            distanceHtml = `<span class="badge bg-secondary ms-1"><i class="fas fa-road me-1"></i>${distance} mi</span>`;
+            if (distance !== null) {
+                distanceHtml = `<span class="badge bg-secondary ms-1" data-bs-toggle="tooltip" title="Distance from your location"><i class="fas fa-road me-1"></i>${distance} mi</span>`;
+            }
         }
+
         html += `<div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fs-5 fw-bold text-success">$${netCost.toLocaleString()}<small class="text-muted fw-normal small"> / year (Net)</small></span>
+                    <span class="fs-5 fw-bold text-success" data-bs-toggle="tooltip" title="Estimated Net Cost (COA - Total Scholarships)">$${netCost.toLocaleString()}<small class="text-muted fw-normal small"> / year</small></span>
                     ${distanceHtml}
                  </div>`;
-        if (college.rmpUrl) {
-            html += `<a href="${college.rmpUrl}" target="_blank" class="btn btn-sm btn-outline-primary mb-3"><i class="fas fa-external-link-alt me-1"></i>RateMyProfessors</a>`;
-        }
 
-        // --- Campus & Location (Moved Out of Accordion) ---
-        html += `<div class="mb-3 mt-3 border-top pt-3">`; // Add separator and spacing
-        // Campus Map
-        html += `<div class="mb-2"><h6><i class="fas fa-map-marker-alt me-1 text-danger"></i>Campus Map</h6><div class="map-container" id="${mapId}" style="height: 150px;"></div></div>`;
-        // Transportation
-        html += `<div><h6><i class="fas fa-bus me-1 text-secondary"></i>Transportation</h6>`;
+        if (college.rmpUrl) {
+            html += `<a href="${college.rmpUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary mb-2 me-2"><i class="fas fa-star me-1"></i>RateMyProfessors</a>`;
+        }
+        if (college.rankingsUrl) {
+            html += `<a href="${college.rankingsUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-info mb-2"><i class="fas fa-graduation-cap me-1"></i>US News Profile</a>`;
+        }
+        html += `</div>`; // End Left Column
+
+        // Right Column: Map & Location Text
+        html += `<div class="col-md-5 col-lg-4">`;
+        html += `<h6 class="small mb-1"><i class="fas fa-map-marker-alt me-1 text-danger"></i> Location</h6>`;
+        html += `<p class="small text-muted mb-1">${college.location?.city || ''}, ${college.location?.stateAbbr || ''}</p>`;
+        html += `<div class="map-container" id="${mapId}"></div>`;
+        html += `</div>`; // End Right Column
+
+        html += `</div>`; // End Row for Name/Map
+        html += `</div>`; // End Card Header Section
+
+        // --- Transportation Section (Below Header, Above Accordion) ---
+        html += `<div class="transportation-section mb-3 pt-3 border-top">`;
+        html += `<h6><i class="fas fa-bus me-1 text-secondary"></i> Transportation</h6>`;
+        // General Modes Badges
         if (college.transportation && college.transportation.length > 0) {
              college.transportation.forEach(t => html += `<span class="badge bg-light text-dark me-1 mb-1">${t}</span>`);
+             html += `<br>`; // Add line break
         } else {
-             html += `<p class="text-muted small mb-0">No transportation info.</p>`;
+             html += `<p class="text-muted small mb-1">No general transportation info.</p>`;
         }
-        html += `</div>`;
-        html += `</div>`; // End Campus & Location Section
 
-        // --- Accordion for Details ---
-        html += `<div class="accordion accordion-flush mt-3 border-top pt-3" id="${accordionId}">`; // Add separator and spacing
+        // Detailed Public Transport (if available)
+        if (hasPublicTransport) {
+            const pt = college.location.publicTransport;
+            html += `<div class="public-transport-details small mt-2">`; // Add top margin
+            html += `<h6>Public Transport: <a href="${pt.agencyUrl}" target="_blank" rel="noopener noreferrer">${pt.agencyName} <i class="fas fa-external-link-alt fa-xs"></i></a></h6>`;
+            html += `<ul>`;
+            html += `<li><strong>Fares:</strong> ${pt.fareInfo} (<a href="${pt.faresUrl}" target="_blank" rel="noopener noreferrer">details <i class="fas fa-external-link-alt fa-xs"></i></a>)</li>`;
+            if (pt.routes?.length > 0) html += `<li><strong>Relevant Routes:</strong> ${pt.routes.join(', ')}</li>`;
+            if (pt.beginnerNotes) html += `<li><strong>Tips:</strong> ${pt.beginnerNotes}</li>`;
+            html += `</ul>`;
+            html += `<p class="transport-disclaimer text-muted">Note: Fares/routes subject to change. Verify official sources.</p>`;
+            html += `</div>`;
+        }
+        html += `</div>`; // End Transportation Section
+
+
+        // --- Accordion for Details (Use mt-auto to push to bottom) ---
+        // Added mt-auto to push accordion down if content above is short
+        html += `<div class="accordion accordion-flush mt-auto pt-3 border-top" id="${accordionId}">`;
 
         // --- Accordion Item: Costs ---
-        const costCollapseId = `collapse-cost-${sanitizedCollegeName}`;
+        const costCollapseId = `collapse-cost-${sanitizedCollegeName}-${mapId.slice(-4)}`;
         html += `<div class="accordion-item">
                     <h2 class="accordion-header" id="heading-cost-${sanitizedCollegeName}">
                       <button class="accordion-button collapsed py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#${costCollapseId}" aria-expanded="false" aria-controls="${costCollapseId}">
-                        <i class="fas fa-dollar-sign me-2 text-success"></i>Costs & Scholarships
+                        <span class="accordion-button-content">
+                            <i class="fas fa-dollar-sign accordion-icon text-success"></i><span class="accordion-text">Costs & Scholarships</span>
+                        </span>
                       </button>
                     </h2>
-                    <div id="${costCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading-cost-${sanitizedCollegeName}" data-bs-parent="#${accordionId}">
-                      <div class="accordion-body small p-2">`;
-        // Cost Breakdown Chart
-        html += `<div class="mb-2"><h6><i class="fas fa-chart-pie me-1 text-primary"></i>Cost Breakdown</h6><div class="chart-container" style="height: 150px;"><canvas id="${chartId}"></canvas></div><div id="${chartId}-legend" class="pie-legend small d-flex flex-wrap justify-content-center mt-1"></div></div>`;
-        // Annual Costs List
-        html += `<div class="mb-2"><h6><i class="fas fa-list-ul me-1 text-secondary"></i>Annual Costs</h6><ul class="list-group list-group-flush small">`;
-        if (college.tuition) html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0">Tuition <span class="badge bg-light text-dark">$${college.tuition.toLocaleString()}</span></li>`;
-        if (college.fees) html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0">Fees <span class="badge bg-light text-dark">$${college.fees.toLocaleString()}</span></li>`;
-        if (college.housing) html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0">Housing <span class="badge bg-light text-dark">$${college.housing.toLocaleString()}</span></li>`;
-        if (college.meals) html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0">Meals <span class="badge bg-light text-dark">$${college.meals.toLocaleString()}</span></li>`;
-        if (college.costOfAttendance) html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 fw-bold">Total COA <span class="badge bg-light text-dark">$${college.costOfAttendance.toLocaleString()}</span></li>`;
-        html += `</ul></div>`;
-        // Scholarships List
-        html += `<div class="mb-2"><h6><i class="fas fa-award me-1 text-warning"></i>Scholarships & Grants</h6>`;
-        if (college.scholarships && college.scholarships.length > 0) {
-            html += `<ul class="list-group list-group-flush small">`;
-            college.scholarships.forEach(sch => {
-                html += `<li class="list-group-item py-1 px-0">
-                             ${sch.name} - <span class="fw-bold">$${sch.amount.toLocaleString()}</span>
-                             ${sch.renewal ? '<i class="fas fa-check-circle text-success ms-1" title="Renewable"></i>' : '<i class="fas fa-times-circle text-danger ms-1" title="Not Renewable"></i>'}
-                          </li>`;
-            });
-             html += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 fw-bold">Total Aid <span class="badge bg-success text-white">$${totalScholarships.toLocaleString()}</span></li>`;
-            html += `</ul>`;
-        } else {
-            html += `<p class="text-muted small mb-0">No scholarships listed.</p>`;
-        }
-        html += `</div>`;
-        // Tuition Minus Scholarship
-        html += `<div><h6><i class="fas fa-calculator me-1 text-info"></i>Tuition Minus Scholarship</h6>`;
-        html += `<p class="fs-6 fw-bold text-info mb-0">$${tuitionMinusScholarship.toLocaleString()}<small class="text-muted fw-normal small"> / year</small></p>`;
-        html += `<small class="text-muted">(Tuition - Total Scholarships)</small></div>`;
-
-        html += `       </div> <!-- /accordion-body -->
-                    </div> <!-- /accordion-collapse -->
-                  </div>`; // --- End Accordion Item: Costs ---
+                    <div id="${costCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading-cost-${sanitizedCollegeName}">
+                      <div class="accordion-body small p-2">
+                        <!-- Costs Content: Chart, Annual Costs, Scholarships, Tuition Minus Scholarship -->
+                        ${generateCostsAccordionContent(college, chartId, totalScholarships)}
+                      </div>
+                    </div>
+                  </div>`; // End Costs Item
 
         // --- Accordion Item: Academics ---
-        const academicsCollapseId = `collapse-academics-${sanitizedCollegeName}`;
-        html += `<div class="accordion-item">
-                    <h2 class="accordion-header" id="heading-academics-${sanitizedCollegeName}">
-                      <button class="accordion-button collapsed py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#${academicsCollapseId}" aria-expanded="false" aria-controls="${academicsCollapseId}">
-                        <i class="fas fa-book-open me-2 text-info"></i>Academics
-                      </button>
-                    </h2>
-                    <div id="${academicsCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading-academics-${sanitizedCollegeName}" data-bs-parent="#${accordionId}">
-                      <div class="accordion-body small p-2">`;
-        // Majors
-        html += `<div class="mb-2"><h6>Majors</h6>`;
-        if (college.majors && college.majors.length > 0) {
-             college.majors.forEach(m => html += `<span class="badge bg-info text-dark me-1 mb-1">${m}</span>`);
-        } else {
-            html += `<p class="text-muted small mb-0">No majors listed.</p>`;
-        }
-        html += `</div>`;
-        // Special Programs
-        html += `<div><h6>Special Programs</h6>`;
-        if (college.specialPrograms && college.specialPrograms.length > 0) {
-             college.specialPrograms.forEach(p => html += `<span class="badge bg-secondary me-1 mb-1">${p}</span>`);
-        } else {
-            html += `<p class="text-muted small mb-0">None listed.</p>`;
-        }
-        html += `</div>`;
-        html += `       </div> <!-- /accordion-body -->
-                    </div> <!-- /accordion-collapse -->
-                  </div>`; // --- End Accordion Item: Academics ---
-
+         const academicsCollapseId = `collapse-academics-${sanitizedCollegeName}-${mapId.slice(-4)}`;
+         html += `<div class="accordion-item">
+                     <h2 class="accordion-header" id="heading-academics-${sanitizedCollegeName}">
+                       <button class="accordion-button collapsed py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#${academicsCollapseId}" aria-expanded="false" aria-controls="${academicsCollapseId}">
+                          <span class="accordion-button-content">
+                              <i class="fas fa-book-open accordion-icon text-info"></i><span class="accordion-text">Academics</span>
+                          </span>
+                       </button>
+                     </h2>
+                     <div id="${academicsCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading-academics-${sanitizedCollegeName}">
+                       <div class="accordion-body small p-2">
+                         <!-- Academics Content: Majors, Special Programs -->
+                          ${generateAcademicsAccordionContent(college)}
+                       </div>
+                     </div>
+                   </div>`; // End Academics Item
 
         // --- Accordion Item: Documents ---
-        const docsCollapseId = `collapse-docs-${sanitizedCollegeName}`;
+        const docsCollapseId = `collapse-docs-${sanitizedCollegeName}-${mapId.slice(-4)}`;
         html += `<div class="accordion-item">
                     <h2 class="accordion-header" id="heading-docs-${sanitizedCollegeName}">
                       <button class="accordion-button collapsed py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#${docsCollapseId}" aria-expanded="false" aria-controls="${docsCollapseId}">
-                         <i class="fas fa-file-pdf me-2 text-danger"></i>Original Documents
+                          <span class="accordion-button-content">
+                              <i class="fas fa-file-pdf accordion-icon text-danger"></i><span class="accordion-text">Original Documents</span>
+                          </span>
                       </button>
                     </h2>
-                    <div id="${docsCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading-docs-${sanitizedCollegeName}" data-bs-parent="#${accordionId}">
-                      <div class="accordion-body p-2">`;
-        if (college.pdfs && college.pdfs.length > 0) {
-            college.pdfs.forEach((pdf, idx) => {
-                const inputId = `${sanitizedCollegeName}-pdf-input-${idx}`; // Use sanitized name
-                html += `<div class="mb-1">
-                             <button class="btn btn-sm btn-outline-success view-pdf-btn" data-inputid="${inputId}" data-bs-toggle="tooltip" title="View ${pdf.label}" aria-label="View PDF: ${pdf.label}">
-                                 <i class="fas fa-eye me-1"></i> ${pdf.label}
-                             </button>
-                             <input type="file" id="${inputId}" class="hidden-file-input" accept=".pdf" data-filename="${pdf.filename || pdf.label}">
-                          </div>`;
-            });
-        } else {
-             html += `<p class="text-muted small mb-0">No documents listed.</p>`;
-        }
-        html += `       </div> <!-- /accordion-body -->
-                    </div> <!-- /accordion-collapse -->
-                  </div>`; // --- End Accordion Item: Documents ---
+                    <div id="${docsCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading-docs-${sanitizedCollegeName}">
+                      <div class="accordion-body p-2">
+                         <!-- Documents Content: PDF Buttons -->
+                         ${generateDocumentsAccordionContent(college, sanitizedCollegeName)}
+                      </div>
+                    </div>
+                  </div>`; // End Documents Item
 
         html += `</div>`; // --- End Accordion ---
 
         html += `</div></div>`; // Close card-body and card
         return html;
     }
-    let mapInstances = {};
 
-    // Make this the global callback for Google Maps API
-    function initMap() {
-        console.log("Google Maps API loaded, initMap called.");
-        // The actual map rendering will happen inside generateCollegeProfileHTML's call to initializeMap
+    // --- Helper functions for Accordion Content (Reduces clutter in main function) ---
+    function generateCostsAccordionContent(college, chartId, totalScholarships) {
+         const tuitionMinusScholarship = Math.max(0, (college.tuition || 0) - totalScholarships);
+         let content = `<div class="mb-2"><h6><i class="fas fa-chart-pie me-1 text-primary"></i>Cost Breakdown</h6><div class="chart-container"><canvas id="${chartId}"></canvas></div><div id="${chartId}-legend" class="pie-legend small d-flex flex-wrap justify-content-center mt-1"></div></div>`;
+         content += `<div class="mb-2"><h6><i class="fas fa-list-ul me-1 text-secondary"></i>Annual Costs</h6><ul class="list-group list-group-flush small">`;
+         if (college.tuition) content += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 border-0">Tuition <span class="badge bg-light text-dark">$${college.tuition.toLocaleString()}</span></li>`;
+         if (college.fees) content += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 border-0">Fees <span class="badge bg-light text-dark">$${college.fees.toLocaleString()}</span></li>`;
+         if (college.housing) content += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 border-0">Housing <span class="badge bg-light text-dark">$${college.housing.toLocaleString()}</span></li>`;
+         if (college.meals) content += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 border-0">Meals <span class="badge bg-light text-dark">$${college.meals.toLocaleString()}</span></li>`;
+         if (college.costOfAttendance) content += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 fw-bold border-top pt-1 mt-1">Total COA <span class="badge bg-info text-dark">$${college.costOfAttendance.toLocaleString()}</span></li>`;
+         content += `</ul></div>`;
+         content += `<div class="mb-2"><h6><i class="fas fa-award me-1 text-warning"></i>Scholarships & Grants</h6>`;
+         if (college.scholarships?.length > 0) {
+             content += `<ul class="list-group list-group-flush small">`;
+             college.scholarships.forEach(sch => { content += `<li class="list-group-item py-1 px-0 border-0"><i class="fas fa-gift text-success me-1"></i> ${sch.name} - <span class="fw-bold">$${sch.amount.toLocaleString()}</span> ${sch.renewal ? '<i class="fas fa-check-circle text-success ms-1" title="Renewable"></i>' : '<i class="fas fa-times-circle text-danger ms-1" title="Not Renewable"></i>'}</li>`; });
+             content += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 px-0 fw-bold border-top pt-1 mt-1">Total Aid <span class="badge bg-success text-white">$${totalScholarships.toLocaleString()}</span></li></ul>`;
+         } else { content += `<p class="text-muted small mb-0">No scholarships listed.</p>`; }
+         content += `</div>`;
+         content += `<div><h6><i class="fas fa-calculator me-1 text-info"></i>Tuition Minus Scholarship</h6><p class="fs-6 fw-bold text-info mb-0">$${tuitionMinusScholarship.toLocaleString()}<small class="text-muted fw-normal small"> / year</small></p><small class="text-muted">(Tuition - Total Scholarships; Non-negative)</small></div>`;
+         return content;
     }
 
-    function initializeMap(mapId, location, name) {
-        const mapDiv = document.getElementById(mapId);
-        if (!mapDiv) {
-            console.error(`Map container not found: ${mapId}`);
-            return;
-        }
-        if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
-            mapDiv.innerHTML = '<p class="text-muted small p-2">Map location data missing.</p>';
-            return;
-        }
+     function generateAcademicsAccordionContent(college) {
+         let content = `<div class="mb-2"><h6>Majors</h6>`;
+         if (college.majors?.length > 0) { content += college.majors.map(m => `<span class="badge bg-info text-dark me-1 mb-1">${m}</span>`).join(''); }
+         else { content += `<p class="text-muted small mb-0">No specific majors listed.</p>`; }
+         content += `</div>`;
+         content += `<div><h6>Special Programs</h6>`;
+         if (college.specialPrograms?.length > 0) { content += college.specialPrograms.map(p => `<span class="badge bg-secondary me-1 mb-1">${p}</span>`).join(''); }
+         else { content += `<p class="text-muted small mb-0">None listed.</p>`; }
+         content += `</div>`;
+         return content;
+     }
 
-        // Check if Google Maps API is loaded
-        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-            console.warn("Google Maps API not ready yet for map:", mapId);
-            mapDiv.innerHTML = '<p class="text-warning small p-2">Map loading...</p>';
-            // Optionally retry or wait, but the async script load should handle this via initMap callback eventually.
-            return;
-        }
+     function generateDocumentsAccordionContent(college, sanitizedCollegeName) {
+         if (college.pdfs?.length > 0) {
+             let list = `<ul class="list-unstyled mb-0">`;
+             college.pdfs.forEach((pdf, idx) => {
+                 const btnId = `pdf-btn-${sanitizedCollegeName}-${idx}`;
+                 list += `<li class="mb-1"><button id="${btnId}" class="btn btn-sm btn-outline-success view-pdf-btn w-100 text-start" data-filename="${pdf.filename}" data-bs-toggle="tooltip" title="View ${pdf.label}" aria-label="View PDF: ${pdf.label}"><i class="fas fa-eye me-1"></i> ${pdf.label}</button></li>`;
+             });
+             list += `</ul>`;
+             return list;
+         } else {
+             return `<p class="text-muted small mb-0">No documents listed.</p>`;
+         }
+     }
 
-        try {
-            const mapOptions = {
-                center: { lat: location.lat, lng: location.lng },
-                zoom: 15,
-                mapTypeId: 'satellite' // Set default view to satellite
-            };
-            const map = new google.maps.Map(mapDiv, mapOptions);
+     // --- PDF Button Click Handler (Delegated) ---
+     function setupPdfViewButtons() { /* ... same as before ... */
+        console.log("Setting up PDF view button listener via delegation...");
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+        dashboard.removeEventListener('click', handlePdfButtonClick); // Prevent duplicates
+        dashboard.addEventListener('click', handlePdfButtonClick);
+     }
+     function handlePdfButtonClick(event) { /* ... same as before ... */
+         const button = event.target.closest('.view-pdf-btn');
+         if (button) {
+             event.preventDefault(); event.stopPropagation();
+             const filename = button.getAttribute('data-filename');
+             const label = button.getAttribute('aria-label')?.replace('View PDF: ', '') || button.textContent.trim();
+             if (filename) {
+                 const basePath = ''; // Adjust if needed
+                 const fullPath = basePath + filename; showPdfModal(fullPath, label);
+             } else { console.error("PDF button missing data-filename.", button); alert("Could not find PDF file path."); }
+         }
+     }
 
-            const marker = new google.maps.Marker({
-                position: { lat: location.lat, lng: location.lng },
-                map: map,
-                title: name
+    // --- Theme Toggle ---
+    function applyTheme(theme) { /* ... same as before ... */
+        document.body.classList.toggle('dark-mode', theme === 'dark');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        if(themeToggleBtn) { themeToggleBtn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; themeToggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'); }
+        localStorage.setItem('theme', theme);
+        filterAndSortColleges(); // Re-render to apply theme changes to charts etc.
+    }
+
+    // --- Initial Setup (DOMContentLoaded) ---
+    document.addEventListener('DOMContentLoaded', function() { /* ... same as before ... */
+        console.log("DOM fully loaded and parsed");
+        const pdfModalElement = document.getElementById('pdfModal');
+        if (pdfModalElement) {
+            pdfModalInstance = new bootstrap.Modal(pdfModalElement);
+            pdfModalElement.addEventListener('hidden.bs.modal', () => { /* Clear modal content */
+                 const pdfFrame = document.getElementById('pdfFrame'); const pageInfo = document.getElementById('pdfPageInfo'); const modalMsg = document.getElementById('pdfModalMessage');
+                 if(pdfFrame) pdfFrame.innerHTML = ""; if(pageInfo) pageInfo.textContent = ""; if(modalMsg) modalMsg.textContent = ""; currentPdfDoc = null;
             });
+        } else { console.error("PDF Modal element not found!"); }
 
-            const infowindow = new google.maps.InfoWindow({
-                content: `<h6>${name}</h6>`
-            });
+        const filterForm = document.getElementById('filterSortForm');
+        if(filterForm) { /* Setup input/change listeners */
+             filterForm.addEventListener('input', event => { if (event.target.matches('#locationInput, #majorInput')) { filterAndSortColleges(); } });
+             filterForm.addEventListener('change', event => { if (event.target.matches('#sortSelect, #costRange, #scholarshipCheckbox, #userLocationInput')) { if (event.target.id === 'userLocationInput') { handleUserLocationUpdate(); } else { filterAndSortColleges(); } } });
+        } else { console.error("Filter/Sort form not found!"); }
 
-            marker.addListener('click', () => {
-                infowindow.open({
-                    anchor: marker,
-                    map,
-                });
-            });
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        if (themeToggleBtn) { /* Initialize theme */
+            let currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.body.classList.toggle('dark-mode', currentTheme === 'dark'); themeToggleBtn.innerHTML = currentTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; themeToggleBtn.setAttribute('aria-label', currentTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+            themeToggleBtn.addEventListener('click', () => { const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; applyTheme(newTheme); });
+        } else { console.error("Theme toggle button not found!"); }
 
-            // Store map instance if needed later (e.g., for resizing)
-            mapInstances[mapId] = map;
-
-        } catch (e) {
-            console.error(`Error initializing Google map ${mapId}:`, e);
-            mapDiv.innerHTML = '<p class="text-danger small p-2">Error loading map.</p>';
-        }
-    }
-    console.log("initializeChart() called");
-    function initializeChart(chartId, tuition, fees, housing, meals) {
-        const ctx = document.getElementById(chartId);
-        if (!ctx) return;
-
-        // Consistent color mapping
-        const categoryColors = {
-            'Tuition': '#0074d9', // Blue
-            'Fees': '#ff851b',    // Orange
-            'Housing': '#2ecc40', // Green
-            'Meals': '#b10dc9'     // Purple
-        };
-
-        const chartData = [];
-        const chartLabels = [];
-        const chartColors = [];
-
-        if (tuition) { chartData.push(tuition); chartLabels.push('Tuition'); chartColors.push(categoryColors['Tuition']); }
-        if (fees) { chartData.push(fees); chartLabels.push('Fees'); chartColors.push(categoryColors['Fees']); }
-        if (housing) { chartData.push(housing); chartLabels.push('Housing'); chartColors.push(categoryColors['Housing']); }
-        if (meals) { chartData.push(meals); chartLabels.push('Meals'); chartColors.push(categoryColors['Meals']); }
-
-        if (chartData.length === 0) return; // Don't render if no data
-
-        // Generate Custom HTML Legend
-        const legendContainer = document.getElementById(`${chartId}-legend`);
-        if (legendContainer) {
-            // Determine text color based on theme
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            const legendTextColor = isDarkMode ? '#dee2e6' : '#212529'; // Light grey for dark, dark for light
-            legendContainer.style.color = legendTextColor; // Apply the color
-
-            let legendHtml = '';
-            chartLabels.forEach((label, index) => {
-                // Added class "pie-legend-item" for styling
-                legendHtml += `<span class="me-3 pie-legend-item"><span style="display:inline-block;width:12px;height:12px;background-color:${chartColors[index]};margin-right:4px;border-radius:2px;"></span>${label}</span>`;
-            });
-            legendContainer.innerHTML = legendHtml;
-        }
-
-        // Create Chart Instance
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        const tooltipTitleColor = isDarkMode ? '#f8f9fa' : '#212529';
-        const tooltipBodyColor = isDarkMode ? '#dee2e6' : '#343a40';
-        const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
-
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Allow chart to fill container height better
-                plugins: {
-                    legend: {
-                        display: false // Disable default legend
-                    },
-                    tooltip: {
-                         backgroundColor: tooltipBgColor,
-                         titleColor: tooltipTitleColor,
-                         bodyColor: tooltipBodyColor,
-                         callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed !== null) {
-                                    label += '$' + context.parsed.toLocaleString();
-                                }
-                                return label;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // --- Comparison Chart Logic ---
-    let tuitionChartInstance = null;
-    let scholarshipChartInstance = null;
-    let tuitionMinusScholarshipChartInstance = null;
-    let netCostChartInstance = null;
-
-    function initializeTuitionComparisonChart() {
-        console.log("initializeTuitionComparisonChart() called");
-        const ctx = document.getElementById('tuitionComparisonChart');
-        if (!ctx) return;
-
-        const labels = filteredColleges.map(c => c.name);
-        const data = filteredColleges.map(c => c.tuition || 0);
-const lowestTuition = Math.min(...data);
-const highestTuition = Math.max(...data);
-
-        if (tuitionChartInstance) {
-            tuitionChartInstance.destroy();
-        }
-
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const tickColor = isDarkMode ? '#dee2e6' : '#666';
-        const tooltipTitleColor = isDarkMode ? '#f8f9fa' : '#212529';
-        const tooltipBodyColor = isDarkMode ? '#dee2e6' : '#343a40';
-        const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
-
-        tuitionChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Tuition Cost',
-                    data: data,
-                    backgroundColor: 'rgba(0, 116, 217, 0.6)', // Blue
-                    borderColor: 'rgba(0, 116, 217, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'x', // Display college names on X-axis
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: tickColor, // Dark mode compatible
-                            callback: function(value, index) {
-                                // Ensure label exists before returning
-                                return this.chart.data.labels && this.chart.data.labels[index] ? this.chart.data.labels[index] : '';
-                            },
-                            autoSkip: false,
-                            font: { size: 10 } // Use object for font settings
-                         },
-                         grid: {
-                             color: gridColor // Dark mode compatible
-                         }
-                     },
-                     y: {
-                        beginAtZero: true,
-                        ticks: { color: tickColor }, // Dark mode compatible
-                        grid: { color: gridColor } // Dark mode compatible
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: tooltipBgColor,
-                        titleColor: tooltipTitleColor,
-                        bodyColor: tooltipBodyColor,
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function initializeScholarshipComparisonChart() {
-        console.log("initializeScholarshipComparisonChart() called");
-        const ctx = document.getElementById('scholarshipComparisonChart');
-        if (!ctx) return;
-
-        const labels = filteredColleges.map(c => c.name);
-        const data = filteredColleges.map(c =>
-            (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0)
-        );
-
-        if (scholarshipChartInstance) {
-            scholarshipChartInstance.destroy();
-        }
-
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const tickColor = isDarkMode ? '#dee2e6' : '#666';
-        const tooltipTitleColor = isDarkMode ? '#f8f9fa' : '#212529';
-        const tooltipBodyColor = isDarkMode ? '#dee2e6' : '#343a40';
-        const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
-
-        scholarshipChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Total Scholarship Amount',
-                    data: data,
-                    backgroundColor: 'rgba(46, 204, 64, 0.6)', // Green
-                    borderColor: 'rgba(46, 204, 64, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'x',
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                           color: tickColor, // Dark mode compatible
-                           callback: function(value, index) {
-                               // Ensure label exists before returning
-                               return this.chart.data.labels && this.chart.data.labels[index] ? this.chart.data.labels[index] : '';
-                           },
-                           autoSkip: false,
-                           font: { size: 10 } // Use object for font settings
-                        },
-                        grid: {
-                            color: gridColor // Dark mode compatible
-                        }
-                    },
-                     y: {
-                        beginAtZero: true,
-                        ticks: { color: tickColor }, // Dark mode compatible
-                        grid: { color: gridColor } // Dark mode compatible
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                     tooltip: {
-                        backgroundColor: tooltipBgColor,
-                        titleColor: tooltipTitleColor,
-                        bodyColor: tooltipBodyColor,
-                        callbacks: {
-                             label: function(context) {
-                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function initializeNetCostComparisonChart() {
-        console.log("initializeNetCostComparisonChart() called");
-        const ctx = document.getElementById('netCostComparisonChart');
-        if (!ctx) return;
-
-        const labels = filteredColleges.map(c => c.name);
-        const data = filteredColleges.map(c => {
-            const totalSch = (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-            return (c.costOfAttendance || 0) - totalSch;
-        });
-
-        if (netCostChartInstance) {
-            netCostChartInstance.destroy();
-        }
-
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const tickColor = isDarkMode ? '#dee2e6' : '#666';
-        const tooltipTitleColor = isDarkMode ? '#f8f9fa' : '#212529';
-        const tooltipBodyColor = isDarkMode ? '#dee2e6' : '#343a40';
-        const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
-
-        netCostChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Net Cost (COA - Scholarships)',
-                    data: data,
-                    backgroundColor: 'rgba(255, 133, 27, 0.6)', // Orange
-                    borderColor: 'rgba(255, 133, 27, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'x',
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: tickColor, // Dark mode compatible
-                            callback: function(value, index) {
-                               // Ensure label exists before returning
-                               return this.chart.data.labels && this.chart.data.labels[index] ? this.chart.data.labels[index] : '';
-                            },
-                            autoSkip: false,
-                            font: { size: 10 } // Use object for font settings
-                        },
-                        grid: {
-                            color: gridColor // Dark mode compatible
-                        }
-                    },
-                     y: {
-                        beginAtZero: true,
-                        ticks: { color: tickColor }, // Dark mode compatible
-                        grid: { color: gridColor } // Dark mode compatible
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                     tooltip: {
-                        backgroundColor: tooltipBgColor,
-                        titleColor: tooltipTitleColor,
-                        bodyColor: tooltipBodyColor,
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function initializeTuitionMinusScholarshipComparisonChart() {
-        const ctx = document.getElementById('tuitionMinusScholarshipComparisonChart');
-        if (!ctx) return;
-
-        const labels = filteredColleges.map(c => c.name);
-        const data = filteredColleges.map(c => {
-            const totalSch = (c.scholarships || []).reduce((sum, s) => sum + (s.amount || 0), 0);
-            let tuitionMinusScholarship = (c.tuition || 0) - totalSch;
-            if (tuitionMinusScholarship < 0) tuitionMinusScholarship = 0;
-            return tuitionMinusScholarship;
-        });
-
-        if (tuitionMinusScholarshipChartInstance) {
-            tuitionMinusScholarshipChartInstance.destroy();
-        }
-
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const tickColor = isDarkMode ? '#dee2e6' : '#666';
-        const tooltipTitleColor = isDarkMode ? '#f8f9fa' : '#212529';
-        const tooltipBodyColor = isDarkMode ? '#dee2e6' : '#343a40';
-        const tooltipBgColor = isDarkMode ? 'rgba(33, 37, 41, 0.9)' : 'rgba(255, 255, 255, 0.9)';
-
-        tuitionMinusScholarshipChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Tuition Minus Scholarship',
-                    data: data,
-                    backgroundColor: 'rgba(255, 205, 86, 0.7)', // Yellow
-                    borderColor: 'rgba(255, 205, 86, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'x',
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: tickColor, // Dark mode compatible
-                            callback: function(value, index) {
-                                // Ensure label exists before returning
-                                return this.chart.data.labels && this.chart.data.labels[index] ? this.chart.data.labels[index] : '';
-                            },
-                            autoSkip: false,
-                            font: { size: 10 } // Use object for font settings
-                        },
-                        grid: {
-                            color: gridColor // Dark mode compatible
-                        }
-                    },
-                    y: { 
-                         beginAtZero: false,
-                         min: Math.min(...data) - 2000,
-                         max: Math.max(...data) + 2000,
-                         ticks: { color: tickColor }, // Dark mode compatible
-                         grid: { color: gridColor } // Dark mode compatible
-                     }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: tooltipBgColor,
-                        titleColor: tooltipTitleColor,
-                        bodyColor: tooltipBodyColor,
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // --- End Comparison Chart Logic ---
-
-    function setupPdfViewButtons() {
-        console.log("setupPdfViewButtons() called");
-        document.querySelectorAll('.view-pdf-btn').forEach(btn => {
-            console.log("DEBUG: Adding event listener to button:", btn);
-            const inputId = btn.getAttribute('data-inputid');
-            const fileInput = document.getElementById(inputId);
-            // Get the expected file path from the data-filename attribute
-            const filePath = fileInput ? fileInput.getAttribute('data-filename') : null;
-            console.log("DEBUG: filePath from data-filename:", filePath, "inputId:", inputId);
-
-            if (btn && fileInput) {
-                btn.addEventListener('click', function(event) {
-                    console.log("PDF button clicked");
-                    console.log("Button ID:", btn.id, "data-inputid:", btn.getAttribute('data-inputid')); // Log button details
-                    event.preventDefault();
-                    event.stopPropagation();
-                    
-                    const modal = document.getElementById('pdfModal');
-                    const modalMsg = document.getElementById('pdfModalMessage');
-                    const pdfFrame = document.getElementById('pdfFrame');
-                    
-                    console.log("DEBUG: filePath value on click:", filePath, "| input element:", fileInput);
-
-                    if (filePath) {
-                        // Check if PDF.js is loaded
-                       console.log("DEBUG: typeof window.pdfjsLib =", typeof window.pdfjsLib, "at PDF view click, filePath:", filePath);
-                       if (typeof window.pdfjsLib === 'undefined') {
-                           console.warn("DEBUG: window.pdfjsLib IS undefined on PDF view attempt! filePath:", filePath);
-                           modalMsg.textContent = "PDF viewer is still loading. Please try again in a moment.";
-                           modal.style.display = 'block';
-                           return;
-                       }
-
-                       // Double check
-                       if (typeof window.pdfjsLib === 'undefined') {
-                            console.error("DEBUG: window.pdfjsLib IS still undefined just before getDocument! filePath:", filePath);
-                            modalMsg.textContent = "PDF viewer is still loading. Please try again in a moment.";
-                            modal.style.display = 'block';
-                            return;
-                        }
-                        
-                        // Resolve full file path relative to workspace root
-                        // const timestamp = new Date().getTime(); // Removed timestamp generation
-                        const fullPath = encodeURI(filePath); // Use the direct path without timestamp
-                        console.log("Loading PDF from:", fullPath, "original filename:", filePath);
-
-                        modalMsg.textContent = "Loading PDF...";
-                        modal.style.display = 'block';
-
-                        pdfjsLib.getDocument(fullPath).promise.then(function(pdf) {
-    // Get the first page
-    pdf.getPage(1).then(function(page) {
-        // Use a fixed scale for readability (e.g., 1.5)
-        var scale = 1.5;
-        var viewport = page.getViewport({ scale: scale });
-
-        // Prepare canvas using PDF page dimensions
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        // Append canvas to the modal
-        pdfFrame.innerHTML = '';
-        pdfFrame.appendChild(canvas);
-
-        // Render PDF page into the canvas context
-        var renderContext = {
-            canvasContext: context,
-            viewport: viewport
-        };
-        page.render(renderContext);
+        filterAndSortColleges(); // Initial render
+        setupPdfViewButtons(); // Setup PDF listener
     });
 
-   modalMsg.textContent = `PDF loaded: ${filePath}`; // More informative message
-   modal.style.display = 'block';
-}).catch(function(error) {
-   console.error("PDF.js getDocument error:", error, "Requested Path:", fullPath);
-   // Provide more context in the modal
-   let userMessage = `Error loading PDF (${filePath}). `;
-   if (error && error.message) {
-       userMessage += `Details: ${error.message}. `;
-   }
-   if (error && error.name === 'MissingPDFException') {
-        userMessage += 'Please ensure the file exists at the correct path relative to the application.';
-   } else {
-        userMessage += 'There might be a network issue or the file is corrupted.';
-   }
-   modalMsg.textContent = userMessage;
-   pdfFrame.innerHTML = '<p class="text-danger p-3">Could not load PDF content.</p>'; // Clear frame on error
-   modal.style.display = 'block';
-});
-                   } else {
-                       console.error("DEBUG: filePath is falsey! fileInput:", fileInput, fileInput ? fileInput.outerHTML : "(none)");
-                       modalMsg.textContent = "No file path specified for this PDF.";
-                       pdfFrame.innerHTML = '';
-                       modal.style.display = 'block';
-                   }
-               });
-           }
-       });
-   }
-
-    function closePdfModal() {
-        document.getElementById('pdfModal').style.display = 'none';
-        const pdfFrame = document.getElementById('pdfFrame');
-        pdfFrame.innerHTML = ""; // Clear the canvas/iframe content
-        document.getElementById('pdfModalMessage').textContent = "";
-    }
   </script>
-  <script type="module" src="https://unpkg.com/pdfjs-dist@5.1.91"></script>
 </body>
 </html>

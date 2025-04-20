@@ -1,433 +1,466 @@
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f0f0;
-    color: #333;
-}
-h1 {
-    text-align: center;
-    margin-bottom: 1.5rem; /* Added margin */
-}
-#dashboard {
-    margin-top: 1rem;
-}
 
-.gallery {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  @media (min-width: 600px) {
-    .gallery {
-      grid-template-columns: repeat(2, 1fr);
+    /* --- Base Light Mode Styles --- */
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      /* padding: 20px; /* Removed padding, handled by container */
+      background-color: #f0f0f0;
+      color: #333;
     }
-  }
-  
-  @media (min-width: 900px) {
-    .gallery {
-      grid-template-columns: repeat(4, 1fr);
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
     }
-  }
-  
-/* Responsive tweaks for small screens */
-@media (max-width: 767.98px) {
     #dashboard {
+      margin-top: 1rem;
+    }
+    .gallery { /* Keeping your gallery styles */
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 600px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 900px) {
+      .gallery { grid-template-columns: repeat(4, 1fr); }
+    }
+    /* Responsive tweaks */
+    @media (max-width: 767.98px) {
+      #dashboard {
         flex-direction: column;
         align-items: stretch;
         gap: 1.25rem;
         padding: 0 0.5rem;
-    }
-    .card {
+      }
+      .card {
         margin-bottom: 1rem;
         min-width: 0;
-    }
-    .card, .card-title {
+      }
+      .card, .card-title {
         overflow-wrap: anywhere;
         white-space: normal !important;
-    }
-    .profile-section {
-        margin-bottom: 18px;
-        padding: 0.5rem 0.25rem;
-    }
-    .profile-section h3, .profile-section h6, .profile-section p, .profile-section small {
-        font-size: 1em !important;
-        word-break: break-word;
-    }
-    .scholarship-table th, .scholarship-table td {
-        font-size: 0.95em;
-        padding: 2px 4px;
-    }
-    .container-fluid, .container {
+      }
+      /* Removed profile-section specific overrides, rely on card/accordion */
+      .container-fluid, .container {
         padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
-    }
-}
-/* .college-profile styling is now handled by Bootstrap .card */
-.profile-section {
-    margin-bottom: 14px;
-    padding: 0.5rem 1rem;
-}
-.profile-section h3 {
-    margin: 0 0 6px 0;
-    font-size: 1.08em;
-    color: #0074d9;
-}
-.scholarship-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 8px;
-}
-.scholarship-table th, .scholarship-table td {
-    border: 1px solid #ddd;
-    padding: 4px 8px;
-    font-size: 0.98em;
-    text-align: left;
-}
-.scholarship-table th {
-    background: #f2f8fc;
-    cursor: pointer;
-}
-/* .badge styling is now handled by Bootstrap .badge */
-.map-container {
-    width: 100%;
-    height: 180px;
-    margin: 10px 0;
-    border-radius: 8px;
-    overflow: hidden;
-}
-.pdf-list-section {
-    margin-top: 10px;
-}
-.pdf-label {
-    font-weight: bold;
-    margin-right: 8px;
-}
-/* .view-pdf-btn styling is now handled by Bootstrap .btn */
-.hidden-file-input {
-    display: none;
-}
-.chart-container {
-    width: 100%;
-    height: 180px;
-    margin-bottom: 10px;
-}
-/* .rmp-link styling is now handled by Bootstrap .btn */
-body.dark-mode {
-    background-color: #212529; /* Darker background */
-    color: #dee2e6; /* Lighter text */
-}
-body.dark-mode h1 {
-    color: #f8f9fa; /* Lighter heading */
-}
-body.dark-mode .card {
-    background-color: #343a40 !important; /* Dark card background */
-    border-color: #495057; /* Darker border */
-    color: #dee2e6; /* Ensure card text is light */
-}
-
-body.dark-mode .card-body {
-    color: #dee2e6;
-}
-body.dark-mode .card-header {
-    background-color: #495057; /* Darker header */
-    border-bottom-color: #6c757d;
-    color: #f8f9fa; /* Light header text */
-}
-/* Adjust specific header colors for dark mode if needed */
-body.dark-mode .card-header.bg-primary { background-color: #0d6efd !important; color: white !important; }
-body.dark-mode .card-header.bg-success { background-color: #198754 !important; color: white !important; }
-body.dark-mode .card-header.bg-warning { background-color: #ffc107 !important; color: #212529 !important; } /* Keep dark text on yellow */
-body.dark-mode .card-header.bg-info { background-color: #0dcaf0 !important; color: #212529 !important; } /* Keep dark text on light blue */
-
-body.dark-mode .list-group-item {
-    background-color: #343a40 !important; /* Match card background */
-    border-color: #495057; /* Match card border */
-    color: #dee2e6;
-}
-body.dark-mode .list-group-flush > .list-group-item {
-    border-width: 0 0 1px; /* Ensure bottom border exists */
-}
-body.dark-mode .badge.bg-light {
-    background-color: #6c757d !important; /* Darker light badge */
-    color: #f8f9fa !important; /* Light text */
-}
-body.dark-mode .text-muted {
-    color: #d5dee8 !important; /* Lighter muted text */
-}
-body.dark-mode .text-dark {
-     color: #f8f9fa !important; /* Make 'dark' text light in dark mode */
-}
-body.dark-mode .leaflet-container {
-    filter: invert(1) hue-rotate(180deg); /* Full invert for map */
-}
-body.dark-mode .scholarship-table th,
-body.dark-mode .scholarship-table td {
-    border-color: #495057;
-    color: #dee2e6;
-}
-body.dark-mode .scholarship-table th {
-    background-color: #495057; /* Darker header */
-    color: #f8f9fa;
-}
-body.dark-mode .leaderboard-item {
-    border-bottom-color: #495057;
-}
-body.dark-mode .form-control,
-body.dark-mode .form-select {
-    background-color: #495057 !important;
-    border-color: #6c757d !important;
-    color: #dee2e6 !important;
-}
-body.dark-mode .form-control::placeholder {
-    color: #6c757d; /* Darker placeholder color for better contrast */
-}
-body.dark-mode .form-check-label {
-    color: #dee2e6;
-}
-body.dark-mode .btn-outline-secondary {
-    color: #adb5bd;
-    border-color: #6c757d;
-}
-body.dark-mode .btn-outline-secondary:hover {
-    background-color: #6c757d;
-    color: #f8f9fa;
-}
- body.dark-mode .btn-outline-primary {
-    color: #0d6efd;
-    border-color: #0d6efd;
-}
-body.dark-mode .btn-outline-primary:hover {
-    background-color: #0d6efd;
-    color: white;
-}
- body.dark-mode .btn-outline-success {
-    color: #198754;
-    border-color: #198754;
-}
-body.dark-mode .btn-outline-success:hover {
-    background-color: #198754;
-    color: white;
-}
- body.dark-mode .btn-outline-info {
-    color: #0dcaf0;
-    border-color: #0dcaf0;
-}
-body.dark-mode .btn-outline-info:hover {
-    background-color: #0dcaf0;
-    color: #212529;
-}
-body.dark-mode .modal-content {
-    background-color: #343a40;
-    border-color: #495057;
-    color: #dee2e6;
-}
-body.dark-mode .modal-header {
-    border-bottom-color: #495057;
-}
-body.dark-mode .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%); /* Make close button visible */
-}
-/* Adjust chart colors/styles for dark mode if needed via JS or specific Chart.js options */
-/* REMOVED: body.dark-mode .col-md-4 { color: #fff; } - Too broad, rely on card styles */
-/* Custom CSS for 5 columns on extra-large screens - REMOVED */
- /* Ensure comparison charts have enough height */
- #tuitionComparisonChart, #scholarshipComparisonChart, #netCostComparisonChart, #tuitionMinusScholarshipComparisonChart {
-    width: 100% !important;
-    height: 100% !important;
- }
- .card-body.p-0 {
-    position: relative;
-    flex: 1 1 auto;
- }
- .chart-container canvas {
-    /* Removed min/max height constraints */
-    min-width: max-content; /* Keep min-width */
- }
-/* Leaderboard Styles */
-.leaderboard-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid #eee; /* Add separator */
-}
-.leaderboard-item:last-child {
-    border-bottom: none;
-}
-.leaderboard-rank {
-    font-weight: bold;
-    min-width: 25px; /* Ensure rank alignment */
-    text-align: right;
-    margin-right: 10px;
-}
-.leaderboard-name {
-    flex-grow: 1;
-    margin-right: 10px;
-    font-size: 0.9em;
-}
-.leaderboard-rate {
-    font-weight: bold;
-    min-width: 50px; /* Ensure rate alignment */
-    text-align: right;
-    padding: 0.2em 0.5em;
-    border-radius: 0.25rem;
-    color: white; /* Default text color for badges */
-}
-.leaderboard-link {
-    margin-left: 10px;
-}
-/* Color classes */
-.rate-green { background-color: #02c32f; } /* Bootstrap success green */
-.rate-yellow { background-color: #fcd14e; color: #212529 !important; } /* Bootstrap warning yellow, dark text */
-.rate-red { background-color: #dc3545; } /* Bootstrap danger red */
-.rate-na { background-color: #6c757d; } /* Bootstrap secondary gray */
-
-/* Dark Mode Adjustments for Leaderboard Badges */
-body.dark-mode .rate-yellow {
-    color: #212529 !important; /* Keep dark text on yellow even in dark mode for contrast */
-}
-/* Ensure other rate badges have light text (already default, but explicit) */
-body.dark-mode .rate-green,
-body.dark-mode .rate-red,
-body.dark-mode .rate-na {
-    color: #f8f9fa !important;
-}
-
-/* Adjustments for small screens */
- @media (max-width: 767.98px) {
-    .leaderboard-item {
+      }
+      .leaderboard-item {
         padding: 0.4rem 0.8rem;
+      }
+      .leaderboard-name { font-size: 0.85em; }
+      .leaderboard-rate { font-size: 0.8em; min-width: 45px; }
+      .leaderboard-link .btn { padding: 0.1rem 0.3rem; font-size: 0.75em; }
     }
-    .leaderboard-name {
-        font-size: 0.85em;
+    body.dark-mode .leaderboard-item .leaderboard-rank,
+body.dark-mode .leaderboard-item .leaderboard-name {
+    color: var(--dm-text-primary); /* Set rank and name spans to primary dark mode text color */
+}
+
+    /* General Component Styles */
+    .map-container {
+      width: 100%;
+      height: 150px; /* Adjusted from 180px */
+      margin: 10px 0;
+      border-radius: .375rem; /* Match Bootstrap's default */
+      overflow: hidden;
+      background-color: #eee; /* Light mode placeholder */
     }
-    .leaderboard-rate {
-        font-size: 0.8em;
-        min-width: 45px;
+    .chart-container {
+      width: 100%;
+      height: 150px; /* Adjusted from 180px */
+      position: relative;
+      margin-bottom: 10px;
     }
-    .leaderboard-link .btn {
-        padding: 0.1rem 0.3rem;
-        font-size: 0.75em;
+    .pie-legend-item {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.8rem;
     }
- }
- /* Accordion Styles */
-.accordion-button {
-    font-size: 0.9rem; /* Smaller accordion button text */
-}
-.accordion-body {
-    font-size: 0.85rem; /* Smaller accordion body text */
-}
-.accordion-button:not(.collapsed) {
-    color: #0c63e4;
-    background-color: #e7f1ff;
-}
-body.dark-mode .accordion-button:not(.collapsed) {
-    color: #dee2e6;
-    background-color: #495057 !important;
-}
-body.dark-mode .accordion-button {
-    background-color: #343a40 !important;
-    color: #dee2e6;
-}
-body.dark-mode .accordion-button::after {
-    filter: invert(1) grayscale(100%) brightness(200%); /* Make arrow visible */
-}
-body.dark-mode .accordion-item {
-    border-color: #495057;
-}
+    .hidden-file-input { display: none; }
+    .pdf-list-section { margin-top: 10px; }
+    .pdf-label { font-weight: bold; margin-right: 8px; }
+    .accordion-button { font-size: 0.9rem; }
+    .accordion-body { font-size: 0.85rem; }
 
-/* Dark Mode Adjustments for Summary Stats Badges */
-body.dark-mode #summaryStats .badge.bg-primary { background-color: #0d6efd !important; color: white !important; }
-body.dark-mode #summaryStats .badge.bg-success { background-color: #198754 !important; color: white !important; }
-body.dark-mode #summaryStats .badge.bg-warning { background-color: #ffc107 !important; color: #212529 !important; } /* Keep dark text */
-body.dark-mode #summaryStats .badge.bg-info { background-color: #0dcaf0 !important; color: #212529 !important; } /* Keep dark text */
-body.dark-mode #summaryStats .badge.bg-secondary { background-color: #6c757d !important; color: white !important; }
-body.dark-mode #summaryStats .badge {
-    color: #fff !important;
-}
+    /* Leaderboard Styles */
+    .leaderboard-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0.75rem; /* Adjusted from 1rem */
+        border-bottom: 1px solid #dee2e6; /* Lighter border for light mode */
+    }
+    .leaderboard-item:last-child { border-bottom: none; }
+    .leaderboard-rank { font-weight: bold; min-width: 25px; text-align: right; margin-right: 8px; }
+    .leaderboard-name { flex-grow: 1; margin-right: 10px; font-size: 0.9rem; }
+    .leaderboard-rate { font-weight: bold; min-width: 50px; text-align: right; }
+    .leaderboard-rate.rate-green { color: #198754; } /* Text color for light mode */
+    .leaderboard-rate.rate-yellow { color: #664d03; } /* Text color for light mode */
+    .leaderboard-rate.rate-red { color: #dc3545; } /* Text color for light mode */
+    .leaderboard-rate.rate-na { color: #6c757d; font-style: italic; } /* Text color for light mode */
+    .leaderboard-link { margin-left: 8px; padding: 0.1rem 0.4rem; font-size: 0.8rem; }
+    .leaderboard-link i { font-size: 0.7rem; }
+    .leaderboard-item > div:last-child { display: flex; align-items: center; }
+    #npteLeaderboard .ms-1.text-muted.small { font-size: 0.75rem; white-space: nowrap; }
 
-/* Dark Mode Adjustment for Main Net Cost Text */
-body.dark-mode .card-body .fs-5.text-success {
-    color: #20c997 !important; /* Lighter green for dark background */
-    background-color: #333 !important; /* Dark background for contrast */
-}
+    /* PDF Modal Styles */
+    #pdfFrame {
+      overflow: auto;
+      background: #f5f5f5;
+      text-align: center;
+    }
+    #pdfFrame canvas {
+      display: block;
+      margin: 10px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      max-width: 100%;
+      height: auto !important;
+    }
 
-/* Dark Mode Adjustments for Accordion Content based on image */
-body.dark-mode .pie-legend-item {
-    color: #dee2e6 !important; /* Make legend text light */
-}
-/* More specific icon targeting within accordion body */
-body.dark-mode .accordion-body .fa-chart-pie.text-primary { color: #58a6ff !important; } /* Cost Breakdown Icon */
-body.dark-mode .accordion-body .fa-list-ul.text-secondary { color: #adb5bd !important; } /* Annual Costs Icon */
-body.dark-mode .accordion-body .fa-award.text-warning { color: #ffda6b !important; } /* Scholarships Icon */
-body.dark-mode .accordion-body .fa-calculator.text-info { color: #67d5f0 !important; } /* Tuition Minus Scholarship Icon */
+    /* Sticky Sidebar */
+    @media (min-width: 768px) {
+      .row > .col-md-4 {
+        position: -webkit-sticky; position: sticky;
+        top: 20px;
+        height: calc(100vh - 40px); /* Adjust as needed */
+        overflow-y: auto;
+      }
+    }
 
-/* Accordion Header Icons */
- body.dark-mode .accordion-button i.text-success { color: #20c997 !important; } /* Costs & Scholarships Header Icon */
- body.dark-mode .accordion-button i.text-info { color: #67d5f0 !important; } /* Academics Header Icon */
- body.dark-mode .accordion-button i.text-danger { color: #ff7b7b !important; } /* Campus & Docs Header Icons */
+    /* Header Styling */
+    header.container-fluid {
+      background-color: #f8f9fa; /* Default light mode header */
+      border-bottom: 1px solid #dee2e6;
+      box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); /* Subtle shadow */
+    }
 
 
-body.dark-mode .list-group-item i.fa-check-circle.text-success {
-     color: #20c997 !important; /* Lighter green for checkmark */
-}
-body.dark-mode .accordion-body .fs-6.text-info {
-     color: #67d5f0 !important; /* Lighter cyan for Tuition Minus Scholarship value */
-}
-/* Sticky Sidebar for Comparison Charts */
-@media (min-width: 768px) { /* Apply only on md breakpoint and up */
-  .row > .col-md-4 { /* Target the sidebar column directly */
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 20px; /* Adjust this value based on your header/nav height */
-    height: calc(100vh - 40px); /* Example height, adjust as needed */
-    overflow-y: auto; /* Allow scrolling within the sidebar if content overflows */
-  }
-}
-/* Header background styling */
-body:not(.dark-mode) header.container-fluid {
-  background-color: #f8f9fa; /* Light grey for light mode (similar to bg-light) */
-  border-bottom: 1px solid #dee2e6;
-}
+    /* --- Dark Mode Color Variables --- */
+    :root {
+        --dm-bg-primary: #121212;      /* Deepest background */
+        --dm-bg-surface: #1e1e1e;     /* Card/Modal background */
+        --dm-bg-interactive: #2a2a2a; /* Input/Accordion/Header background */
+        --dm-bg-hover: #333;          /* Hover background */
+        --dm-border-subtle: #333;      /* Card borders etc. */
+        --dm-border-medium: #444;      /* Input/Accordion/Header borders */
+        --dm-border-strong: #555;      /* Stronger borders, dividers */
+        --dm-text-primary: #e0e0e0;     /* Main text */
+        --dm-text-secondary: #adb5bd;   /* Muted text */
+        --dm-text-emphasis: #ffffff;   /* White text */
+        --dm-text-placeholder: #888;   /* Placeholder text */
+        --dm-text-on-accent: #ffffff;  /* Text on colored backgrounds (default white) */
+        --dm-text-on-warning: #000000; /* Dark text for yellow warning */
+        --dm-text-on-info: #000000;    /* Dark text for cyan info */
 
-body.dark-mode header.container-fluid {
-  background-color: #212529; /* Dark grey for dark mode */
-  border-bottom: 1px solid #495057;
-  color: #f8f9fa;
-}
+        /* Lighter accent colors for text/borders in dark mode */
+        --dm-color-primary-light: #58a6ff;
+        --dm-color-success-light: #3dd56d; /*#20c997;*/
+        --dm-color-warning-light: #ffda6b;
+        --dm-color-info-light:    #67d5f0;
+        --dm-color-danger-light:  #ff7b7b;
+        --dm-color-secondary-light: #adb5bd;
 
-/* Ensure header text is visible in dark mode */
-body.dark-mode header h1 {
-    color: #f8f9fa; /* Light text for dark background */
-}
+        /* Bootstrap colors for reference (use directly or map to variables) */
+        --bs-primary: #0d6efd;
+        --bs-success: #198754;
+        --bs-warning: #ffc107;
+        --bs-info:    #0dcaf0;
+        --bs-danger:  #dc3545;
+        --bs-secondary: #6c757d;
+        --bs-light:   #f8f9fa;
+        --bs-dark:    #212529;
+    }
 
-/* Adjust filter form label color in dark mode */
-body.dark-mode header .form-check-label {
-    color: #adb5bd; /* Lighter text for dark background */
-}
+    /* --- Applying Dark Mode Styles --- */
+    body.dark-mode {
+      background-color: var(--dm-bg-primary);
+      color: var(--dm-text-primary);
+    }
+    body.dark-mode h1 {
+        color: var(--dm-text-emphasis);
+    }
+    body.dark-mode header.container-fluid {
+      background-color: var(--dm-bg-interactive); /* Darker header */
+      border-bottom: 1px solid var(--dm-border-medium);
+      color: var(--dm-text-emphasis); /* Ensure header text is light */
+    }
+    body.dark-mode header h1 { /* Specificity for h1 in header */
+      color: var(--dm-text-emphasis);
+    }
+    body.dark-mode header .form-check-label {
+        color: var(--dm-text-secondary); /* Lighter label text in header */
+    }
 
-/* Dark mode styles for form controls - Increased specificity with !important */
-body.dark-mode .form-control,
-body.dark-mode .form-select {
-    background-color: #495057 !important;
-    border-color: #6c757d !important;
-    color: #dee2e6 !important;
-}
+    /* Cards */
+    body.dark-mode .card {
+      background-color: var(--dm-bg-surface) !important;
+      border-color: var(--dm-border-subtle);
+      color: var(--dm-text-primary);
+    }
+    body.dark-mode .card-header {
+        background-color: var(--dm-bg-hover) !important; /* Uniform header */
+        color: var(--dm-text-emphasis) !important;
+        border-bottom: 1px solid var(--dm-border-medium);
+    }
+    /* Keep original bootstrap background colors for semantic headers */
+    body.dark-mode .card-header.bg-primary { background-color: var(--bs-primary) !important; color: var(--dm-text-on-accent) !important; }
+    body.dark-mode .card-header.bg-success { background-color: var(--bs-success) !important; color: var(--dm-text-on-accent) !important; }
+    body.dark-mode .card-header.bg-warning { background-color: var(--bs-warning) !important; color: var(--dm-text-on-warning) !important; }
+    body.dark-mode .card-header.bg-info { background-color: var(--bs-info) !important; color: var(--dm-text-on-info) !important; }
+    body.dark-mode .card-header.bg-danger { background-color: var(--bs-danger) !important; color: var(--dm-text-on-accent) !important; }
 
-body.dark-mode .form-select option {
-    background-color: #495057 !important;
-    color: #dee2e6 !important;
-}
+    /* List Group */
+    body.dark-mode .list-group-item {
+      background-color: var(--dm-bg-surface) !important; /* Match card */
+      border-color: var(--dm-border-medium);
+      color: var(--dm-text-primary);
+    }
+    body.dark-mode .list-group-flush > .list-group-item {
+        border-width: 0 0 1px; /* Ensure bottom border */
+        border-color: var(--dm-border-medium); /* Consistent border */
+    }
+    /* List items inside accordion/modal */
+    body.dark-mode .accordion-body .list-group-item,
+    body.dark-mode .modal-body .list-group-item {
+        background-color: transparent !important; /* Inherit background */
+        border-color: var(--dm-border-medium); /* Keep consistent border */
+    }
+     body.dark-mode .list-group-item.fw-bold.border-top { /* Total rows */
+        border-top-color: var(--dm-border-strong) !important;
+    }
 
-/* Style the select arrow in dark mode - Increased specificity with !important */
-body.dark-mode .form-select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23f8f9fa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") !important;
-}
+    /* Forms */
+    body.dark-mode .form-control,
+    body.dark-mode .form-select {
+        background-color: var(--dm-bg-interactive) !important;
+        border-color: var(--dm-border-medium) !important;
+        color: var(--dm-text-primary) !important;
+    }
+    body.dark-mode .form-control::placeholder {
+        color: var(--dm-text-placeholder);
+    }
+    body.dark-mode .form-control:focus,
+    body.dark-mode .form-select:focus {
+        background-color: var(--dm-bg-interactive);
+        color: var(--dm-text-primary);
+        border-color: var(--dm-color-primary-light); /* Use lighter blue for focus */
+        box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25); /* Adjusted focus shadow */
+    }
+    body.dark-mode .form-select option {
+        background-color: var(--dm-bg-interactive) !important; /* Ensure dropdown options match */
+        color: var(--dm-text-primary) !important;
+    }
+    body.dark-mode .form-select { /* Select Arrow */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") !important;
+    }
+    body.dark-mode .form-check-input {
+        background-color: var(--dm-bg-interactive);
+        border-color: var(--dm-border-medium);
+    }
+    body.dark-mode .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+    body.dark-mode .form-check-input:focus {
+        border-color: var(--dm-color-primary-light);
+        box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25);
+    }
+    body.dark-mode .form-check-label {
+        color: var(--dm-text-primary);
+    }
 
-/* Add specific style for disabled state */
-body.dark-mode .form-select:disabled {
-    color: #6c757d !important; /* Use a muted color for disabled text */
-    opacity: 0.8; /* Slightly fade out the disabled select */
-}
+    /* Accordion */
+    body.dark-mode .accordion-button {
+        background-color: var(--dm-bg-interactive) !important;
+        color: var(--dm-text-primary);
+    }
+    body.dark-mode .accordion-button:not(.collapsed) {
+        background-color: var(--dm-bg-hover) !important;
+        color: var(--dm-text-emphasis);
+        box-shadow: none; /* Remove default Bootstrap shadow */
+    }
+    body.dark-mode .accordion-button::after {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    body.dark-mode .accordion-button:focus {
+         border-color: var(--dm-color-primary-light);
+         box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25);
+         z-index: 3;
+    }
+    body.dark-mode .accordion-body {
+        background-color: var(--dm-bg-surface); /* Match card background */
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    body.dark-mode .accordion-item {
+        border-color: var(--dm-border-medium);
+    }
+
+    /* Modal */
+    body.dark-mode .modal-content {
+        background-color: var(--dm-bg-surface);
+        color: var(--dm-text-primary);
+        border-color: var(--dm-border-strong);
+    }
+    body.dark-mode .modal-header {
+        border-bottom-color: var(--dm-border-medium);
+    }
+    body.dark-mode .modal-footer {
+        border-top-color: var(--dm-border-medium);
+    }
+    body.dark-mode .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    /* Text & Links */
+    body.dark-mode .text-muted {
+        color: var(--dm-text-secondary) !important;
+    }
+    body.dark-mode .text-dark { /* Make text-dark light in dark mode */
+         color: var(--dm-text-primary) !important;
+    }
+    body.dark-mode a {
+         color: var(--dm-color-primary-light); /* Lighter link color */
+    }
+    body.dark-mode a:hover {
+         color: #8ec2ff; /* Slightly brighter on hover */
+    }
+    body.dark-mode .fs-5.text-success { /* Net cost main display */
+      color: var(--dm-color-success-light) !important;
+      /* background-color: transparent !important; Removed dark background */
+    }
+    body.dark-mode .accordion-body .fs-6.text-info { /* Tuition Minus Scholarship */
+     color: var(--dm-color-info-light) !important;
+    }
+
+    /* Badges */
+    body.dark-mode .badge {
+        border: 1px solid transparent; /* Base border */
+    }
+    body.dark-mode .badge.bg-light {
+        background-color: var(--dm-bg-hover) !important;
+        color: var(--dm-text-primary) !important;
+        border-color: var(--dm-border-strong);
+    }
+    body.dark-mode .badge.bg-secondary {
+        background-color: var(--bs-secondary) !important;
+        color: var(--dm-text-emphasis) !important;
+    }
+    body.dark-mode .badge.bg-primary { background-color: var(--bs-primary) !important; color: var(--dm-text-on-accent) !important; }
+    body.dark-mode .badge.bg-success { background-color: var(--bs-success) !important; color: var(--dm-text-on-accent) !important; }
+    body.dark-mode .badge.bg-info { background-color: var(--bs-info) !important; color: var(--dm-text-on-info) !important; }
+    body.dark-mode .badge.bg-warning { background-color: var(--bs-warning) !important; color: var(--dm-text-on-warning) !important; }
+    body.dark-mode .badge.bg-danger { background-color: var(--bs-danger) !important; color: var(--dm-text-on-accent) !important; }
+    /* Summary Stats Badges */
+    body.dark-mode #summaryStats .badge {
+        border: 1px solid var(--dm-border-strong);
+        /* Ensure text color overrides default badge colors if needed */
+        color: var(--dm-text-emphasis) !important;
+    }
+    body.dark-mode #summaryStats .badge.bg-warning,
+    body.dark-mode #summaryStats .badge.bg-info {
+        color: var(--dm-text-on-warning) !important; /* Keep dark text on yellow/cyan */
+    }
+
+    /* Buttons */
+    body.dark-mode .btn-outline-secondary {
+        color: var(--dm-text-secondary);
+        border-color: var(--dm-border-medium);
+    }
+    body.dark-mode .btn-outline-secondary:hover {
+        color: var(--dm-text-emphasis);
+        background-color: var(--bs-secondary);
+        border-color: var(--bs-secondary);
+    }
+    body.dark-mode .btn-outline-primary {
+        color: var(--dm-color-primary-light);
+        border-color: var(--dm-color-primary-light);
+    }
+    body.dark-mode .btn-outline-primary:hover {
+        color: var(--dm-text-on-accent);
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+     body.dark-mode .btn-outline-success {
+        color: var(--dm-color-success-light);
+        border-color: var(--dm-color-success-light);
+    }
+    body.dark-mode .btn-outline-success:hover {
+        color: var(--dm-text-on-accent);
+        background-color: var(--bs-success);
+        border-color: var(--bs-success);
+    }
+     body.dark-mode .btn-outline-info {
+        color: var(--dm-color-info-light);
+        border-color: var(--dm-color-info-light);
+    }
+    body.dark-mode .btn-outline-info:hover {
+        color: var(--dm-text-on-info);
+        background-color: var(--bs-info);
+        border-color: var(--bs-info);
+    }
+
+    /* Leaderboard Dark Mode */
+    body.dark-mode .leaderboard-item {
+         background-color: var(--dm-bg-surface); /* Match card background */
+         border-color: var(--dm-border-medium);
+    }
+    body.dark-mode #npteLeaderboard .leaderboard-link { /* Link button */
+         border-color: var(--dm-color-info-light);
+         color: var(--dm-color-info-light);
+    }
+    body.dark-mode #npteLeaderboard .leaderboard-link:hover {
+         background-color: var(--bs-info);
+         border-color: var(--bs-info);
+         color: var(--dm-text-on-info);
+    }
+    body.dark-mode #npteLeaderboard .rate-green { color: var(--dm-color-success-light); }
+    body.dark-mode #npteLeaderboard .rate-yellow { color: var(--dm-color-warning-light); }
+    body.dark-mode #npteLeaderboard .rate-red { color: var(--dm-color-danger-light); }
+    body.dark-mode #npteLeaderboard .rate-na { color: var(--dm-text-secondary); font-style: italic; }
+    body.dark-mode #npteLeaderboard .leaderboard-item .text-muted { /* Grads text */
+         color: var(--dm-text-secondary) !important;
+    }
+
+    /* Dark Mode PDF Viewer */
+    body.dark-mode #pdfFrame {
+        background: var(--dm-bg-interactive); /* Slightly lighter than deepest bg */
+    }
+     body.dark-mode #pdfFrame canvas {
+         box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+         /* Optional: Less intense invert for PDF content */
+         /* filter: invert(95%) hue-rotate(180deg); */
+     }
+
+    /* Dark Mode Icons */
+    body.dark-mode .pie-legend-item {
+        color: var(--dm-text-primary) !important; /* Make legend text light */
+    }
+    /* Accordion Body Icons */
+    body.dark-mode .accordion-body .fa-chart-pie.text-primary { color: var(--dm-color-primary-light) !important; }
+    body.dark-mode .accordion-body .fa-list-ul.text-secondary { color: var(--dm-color-secondary-light) !important; }
+    body.dark-mode .accordion-body .fa-award.text-warning { color: var(--dm-color-warning-light) !important; }
+    body.dark-mode .accordion-body .fa-calculator.text-info { color: var(--dm-color-info-light) !important; }
+    body.dark-mode .accordion-body .fa-gift.text-success { color: var(--dm-color-success-light) !important; }
+    body.dark-mode .accordion-body .fa-check-circle.text-success { color: var(--dm-color-success-light) !important; }
+    body.dark-mode .accordion-body .fa-times-circle.text-danger { color: var(--dm-color-danger-light) !important; }
+    /* Accordion Header Icons */
+    body.dark-mode .accordion-button i.text-success { color: var(--dm-color-success-light) !important; }
+    body.dark-mode .accordion-button i.text-info { color: var(--dm-color-info-light) !important; }
+    body.dark-mode .accordion-button i.text-danger { color: var(--dm-color-danger-light) !important; }
+    /* Other Icons */
+    body.dark-mode .card-body .fa-map-marker-alt.text-danger { color: var(--dm-color-danger-light) !important; }
+    body.dark-mode .card-body .fa-bus.text-secondary { color: var(--dm-color-secondary-light) !important; }
+
+    /* Dark Mode Map Container */
+    body.dark-mode .map-container {
+        background-color: var(--dm-bg-hover);
+    }
+    /* Optional: Invert Google Maps - can affect readability */
+    /*
+    body.dark-mode .map-container > div {
+         filter: invert(1) hue-rotate(180deg);
+    }
+    */
